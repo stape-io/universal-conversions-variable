@@ -44,7 +44,7 @@ ___TEMPLATE_PARAMETERS___
       },
       {
         "value": "twitter",
-        "displayValue": "Twitter Ads"
+        "displayValue": "Twitter CAPI"
       },
       {
         "value": "microsoft",
@@ -57,10 +57,14 @@ ___TEMPLATE_PARAMETERS___
       {
         "value": "snap",
         "displayValue": "Snapchat"
+      },
+      {
+        "value": "gAdsOff",
+        "displayValue": "Google Ads Offline"
       }
     ],
     "simpleValueType": true,
-    "help": "Choose which platform to generate parameters for, template only allows one per variable instance."
+    "help": "Choose which platform to generate parameter"
   },
   {
     "type": "RADIO",
@@ -112,7 +116,8 @@ ___TEMPLATE_PARAMETERS___
       },
       {
         "value": "items",
-        "displayValue": "items"
+        "displayValue": "items",
+        "help": ""
       },
       {
         "value": "ids",
@@ -125,6 +130,30 @@ ___TEMPLATE_PARAMETERS___
       {
         "paramName": "platform",
         "paramValue": "ga4",
+        "type": "EQUALS"
+      }
+    ]
+  },
+  {
+    "type": "RADIO",
+    "name": "gAdsOff_task",
+    "displayName": "What to return",
+    "radioItems": [
+      {
+        "value": "value",
+        "displayValue": "value",
+        "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
+      },
+      {
+        "value": "items",
+        "displayValue": "items"
+      }
+    ],
+    "simpleValueType": true,
+    "enablingConditions": [
+      {
+        "paramName": "platform",
+        "paramValue": "gAdsOff",
         "type": "EQUALS"
       }
     ]
@@ -239,23 +268,14 @@ ___TEMPLATE_PARAMETERS___
     "displayName": "What to return",
     "radioItems": [
       {
-        "value": "ids",
-        "displayValue": "content_ids [ ]"
-      },
-      {
-        "value": "name",
-        "displayValue": "content_name \u0027 \u0027",
-        "help": "will only return value if there is one object in product array, since content_name parameter is applicable only to single product (type) events"
+        "value": "contents",
+        "displayValue": "contents [{ }]"
       },
       {
         "value": "value",
         "displayValue": "value",
         "subParams": [],
         "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
-      },
-      {
-        "value": "numitems",
-        "displayValue": "num_items"
       }
     ],
     "simpleValueType": true,
@@ -299,7 +319,7 @@ ___TEMPLATE_PARAMETERS___
   {
     "type": "GROUP",
     "name": "arrayGroup",
-    "displayName": "Array of product objects",
+    "displayName": "Input Array",
     "groupStyle": "ZIPPY_OPEN",
     "subParams": [
       {
@@ -319,7 +339,7 @@ ___TEMPLATE_PARAMETERS___
   {
     "type": "GROUP",
     "name": "keyGroup",
-    "displayName": "Array keys",
+    "displayName": "Input Array Keys",
     "groupStyle": "ZIPPY_OPEN",
     "subParams": [
       {
@@ -381,23 +401,10 @@ ___TEMPLATE_PARAMETERS___
             "paramName": "platform",
             "paramValue": "klaviyo",
             "type": "EQUALS"
-          }
-        ]
-      },
-      {
-        "type": "TEXT",
-        "name": "keyVar",
-        "displayName": "Product Variant",
-        "simpleValueType": true,
-        "enablingConditions": [
-          {
-            "paramName": "platform",
-            "paramValue": "ga4",
-            "type": "EQUALS"
           },
           {
             "paramName": "platform",
-            "paramValue": "klaviyo",
+            "paramValue": "twitter",
             "type": "EQUALS"
           }
         ]
@@ -414,35 +421,50 @@ ___TEMPLATE_PARAMETERS___
             "type": "EQUALS"
           }
         ]
-      },
-      {
-        "type": "TEXT",
-        "name": "keyListName",
-        "displayName": "Item List Name",
-        "simpleValueType": true,
-        "enablingConditions": [
-          {
-            "paramName": "platform",
-            "paramValue": "ga4",
-            "type": "EQUALS"
-          }
-        ]
-      },
-      {
-        "type": "TEXT",
-        "name": "keyListId",
-        "displayName": "Item List Id",
-        "simpleValueType": true,
-        "enablingConditions": [
-          {
-            "paramName": "platform",
-            "paramValue": "ga4",
-            "type": "EQUALS"
-          }
-        ]
       }
     ],
     "help": "keys for corresponding parameters within input array"
+  },
+  {
+    "type": "GROUP",
+    "name": "customParamsGroup",
+    "displayName": "Custom Parameters",
+    "groupStyle": "ZIPPY_OPEN",
+    "subParams": [
+      {
+        "type": "SIMPLE_TABLE",
+        "name": "customParams",
+        "displayName": "",
+        "simpleTableColumns": [
+          {
+            "defaultValue": "",
+            "displayName": "Custom parameter key in your array",
+            "name": "cusKey",
+            "type": "TEXT"
+          },
+          {
+            "defaultValue": "",
+            "displayName": "Custom parameter name to return",
+            "name": "cusName",
+            "type": "TEXT"
+          }
+        ],
+        "newRowButtonText": "Add Custom Parameter",
+        "alwaysInSummary": false
+      }
+    ],
+    "enablingConditions": [
+      {
+        "paramName": "platform",
+        "paramValue": "ga4",
+        "type": "EQUALS"
+      },
+      {
+        "paramName": "platform",
+        "paramValue": "klaviyo",
+        "type": "EQUALS"
+      }
+    ]
   }
 ]
 
@@ -450,6 +472,9 @@ ___TEMPLATE_PARAMETERS___
 ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 
 const makeInteger = require('makeInteger');
+const makeNumber = require('makeNumber');
+const makeString = require('makeString');
+const makeTableMap = require('makeTableMap');
 const getType = require('getType');
 const math = require('Math');
 
@@ -465,215 +490,263 @@ let keyListId = data.keyListId;
 let contentType = data.contentType;
 let task;
 
+const customParamMap = data.customParams ? makeTableMap(data.customParams, 'cusKey', 'cusName') : {};
 
 if (!data.orderItems || !data.orderItems.length)
-    return ;
+  return ;
 else
-    return runTask();
+  return runTask();
 
 
 function runTask() {
 
-    if (data.meta_task)
-        task = data.meta_task;
+  if (data.meta_task)
+    task = data.meta_task;
 
-    if (data.ga4_task)
-        task = data.ga4_task;
+  if (data.ga4_task)
+    task = data.ga4_task;
 
-    if (data.tiktok_task)
-        task = data.tiktok_task;
+  if (data.tiktok_task)
+    task = data.tiktok_task;
 
-    if (data.twitter_task)
-        task = data.twitter_task;
+  if (data.twitter_task)
+    task = data.twitter_task;
 
-    if (data.microsoft_task)
-        task = data.microsoft_task;
+  if (data.microsoft_task)
+    task = data.microsoft_task;
 
-    if (data.klaviyo_task)
-        task = data.klaviyo_task;
+  if (data.klaviyo_task)
+    task = data.klaviyo_task;
 
-    if (data.snap_task)
-        task = data.snap_task;
+  if (data.snap_task)
+    task = data.snap_task;
 
-    if (task === 'contents')
-        return getContents(data.orderItems, data.platform);
+  if (data.gAdsOff_task)
+    task = data.gAdsOff_task;
 
-    if (task === 'ids')
-        return getContentIds(data.orderItems);
+  if (task === 'contents')
+    return getContents(data.orderItems, data.platform);
 
-    if (task === 'name')
-        return getContentName(data.orderItems);
+  if (task === 'ids')
+    return getContentIds(data.orderItems);
 
-    if (task === 'value')
-        return getValue(data.orderItems);
+  if (task === 'name')
+    return getContentName(data.orderItems);
 
-    if (task === 'numitems')
-        return getNumItems(data.orderItems);
+  if (task === 'value')
+    return getValue(data.orderItems);
 
-    if (task === 'items')
-        return getItems(data.orderItems, data.platform);
+  if (task === 'numitems')
+    return getNumItems(data.orderItems);
 
-    if (task === 'item')
-        return getItem(data.orderItems);
+  if (task === 'items')
+    return getItems(data.orderItems, data.platform);
+
+  if (task === 'item')
+    return getItem(data.orderItems);
 }
 
 
 function getItem(arr) {
 
-    let cat = [];
-    cat.push(arr[0][keyCat]);
+  let cat = [];
+  cat.push(arr[0][keyCat]);
 
-    return {
-        'ProductID': arr[0][keyId],
-        'ProductName': arr[0][keyNm],
-        'Price': arr[0][keyPr],
-        'ImageURL': arr[0][keyImg],
-        'Categories': cat
-    };
+  let item = {
+    'ProductID': arr[0][keyId],
+    'ProductName': arr[0][keyNm],
+    'Price': arr[0][keyPr],
+    'ImageURL': arr[0][keyImg],
+    'Categories': cat
+  };
+
+  return item;
 }
+
 
 
 function getContents(arr, platform) {
 
-    let contents = [];
+  let contents = [];
 
-    for (let i = 0; i < arr.length; i++) {
+  for (let i = 0; i < arr.length; i++) {
 
-        let qt = 1;
-        if (arr[i][keyQt])
-            qt = arr[i][keyQt];
+    let qt = 1;
+    if (arr[i][keyQt])
+      qt = arr[i][keyQt];
 
-        if (platform === 'meta') {
-            contents.push({
-                'id': arr[i][keyId],
-                'quantity': qt,
-                'item_price': arr[i][keyPr]
-            });
-        }
-
-        if (platform === 'tiktok') {
-            contents.push({
-                'content_id': arr[i][keyId],
-                'content_type': contentType,
-                'quantity': qt,
-                'price': arr[i][keyPr]
-            });
-        }
-
+    if (platform === 'meta') {
+      contents.push({
+        'id': arr[i][keyId],
+        'quantity': qt,
+        'item_price': arr[i][keyPr]
+      });
     }
 
-    return contents;
+    if (platform === 'tiktok') {
+      contents.push({
+        'content_id': arr[i][keyId],
+        'content_type': contentType,
+        'quantity': qt,
+        'price': arr[i][keyPr]
+      });
+    }
+
+    if (platform === 'twitter') {
+      contents.push({
+        'content_id': arr[i][keyId],
+        'content_name': arr[i][keyNm],
+        'content_type': arr[i][keyCat],
+        'num_items': qt,
+        'content_price': arr[i][keyPr]
+      });
+    }
+
+  }
+
+  return contents;
 }
 
 
 function getContentIds(arr) {
 
-    let content_ids = [];
+  let content_ids = [];
 
-    for (let i = 0; i < arr.length; i++) {
-        content_ids.push(arr[i][keyId]);
-    }
+  for (let i = 0; i < arr.length; i++) {
+    content_ids.push(arr[i][keyId]);
+  }
 
-    return content_ids;
+  return content_ids;
 }
 
 
 function getValue(arr) {
 
-    let value = 0;
+  let value = 0;
 
-    for (let i = 0; i < arr.length; i++) {
+  for (let i = 0; i < arr.length; i++) {
 
-        if (arr[i][keyQt]) {
+    if (arr[i][keyQt]) {
 
-            if (getType(arr[i][keyQt]) === 'string')
-                value = value + makeInteger(arr[i][keyQt]) * arr[i][keyPr];
-            else
-                value = value + arr[i][keyQt] * arr[i][keyPr];
+       if (getType(arr[i][keyQt]) === 'string')
+         value = value + makeInteger(arr[i][keyQt]) * arr[i][keyPr];
+       else
+         value = value + arr[i][keyQt] * arr[i][keyPr];
 
-        }
-        else
-            value = value + arr[i][keyPr];
-    }
+     }
+     else
+       value = value + arr[i][keyPr];
+  }
 
-    return math.round(value * 100) / 100;
+  let res = math.round(value * 100) / 100;
+  return res;
 
 }
 
 
 function getItems(arr, platform) {
 
-    let items = [];
+  let items = [];
 
-    for (let i = 0; i < arr.length; i++) {
 
-        let qt = 1;
-        if (arr[i][keyQt])
-            qt = arr[i][keyQt];
 
-        if (platform === 'ga4') {
-            items.push({
-                'item_id': arr[i][keyId],
-                'item_name': arr[i][keyNm],
-                'quantity': qt,
-                'price': arr[i][keyPr],
-                'item_category': arr[i][keyCat],
-                'item_variant': arr[i][keyVar],
-                'item_list_id': arr[i][keyListId],
-                'item_list_name': arr[i][keyListName]
-            });
+  for (let i = 0; i < arr.length; i++) {
+
+    let qt = 1;
+    if (arr[i][keyQt])
+      qt = arr[i][keyQt];
+
+    if (platform === 'ga4') {
+
+      let itemObj = {
+        'item_id': arr[i][keyId],
+        'item_name': arr[i][keyNm],
+        'quantity': qt,
+        'price': arr[i][keyPr],
+        'item_category': arr[i][keyCat]
+      };
+
+      for (let prop in customParamMap) {
+        if (customParamMap[prop]) {
+          itemObj[customParamMap[prop]] = arr[i][prop];
         }
+      }
 
-        if (platform === 'klaviyo') {
+      items.push(itemObj);
 
-            let cat = [];
-            cat.push(arr[i][keyCat]);
-
-            items.push({
-                'ProductID': arr[i][keyId],
-                'ProductName': arr[i][keyNm],
-                'Quantity': qt,
-                'ItemPrice': arr[i][keyPr],
-                'ImageURL': arr[i][keyImg],
-                'ProductCategories': cat
-            });
-        }
     }
 
-    return items;
+    if (platform === 'klaviyo') {
+
+      let cat = [];
+      cat.push(arr[i][keyCat]);
+
+      let itemObj = {
+        'ProductID': arr[i][keyId],
+        'ProductName': arr[i][keyNm],
+        'Quantity': qt,
+        'ItemPrice': arr[i][keyPr],
+        'ImageURL': arr[i][keyImg],
+        'ProductCategories': cat
+      };
+
+      for (let prop in customParamMap) {
+        if (customParamMap[prop]) {
+          itemObj[customParamMap[prop]] = arr[i][prop];
+        }
+      }
+
+      items.push(itemObj);
+
+    }
+
+
+   if (platform === 'gAdsOff') {
+
+      items.push({
+        'productId': makeString(arr[i][keyId]),
+        'quantity': qt,
+        'unitPrice': makeNumber(arr[i][keyPr])
+      });
+    }
+
+
+  }
+
+  return items;
 }
 
 
 function getNumItems(arr) {
 
-    let num_items = 0;
+  let num_items = 0;
 
-    for (let i = 0; i < arr.length; i++) {
+  for (let i = 0; i < arr.length; i++) {
 
-        if (arr[i][keyQt]) {
+    if (arr[i][keyQt]) {
 
-            if (getType(arr[i][keyQt]) === 'string')
-                num_items = num_items + makeInteger(arr[i][keyQt]);
-            else
-                num_items = num_items + arr[i][keyQt];
-        }
-        else
-            num_items = num_items + 1;
-
+      if (getType(arr[i][keyQt]) === 'string')
+        num_items = num_items + makeInteger(arr[i][keyQt]);
+      else
+        num_items = num_items + arr[i][keyQt];
     }
+    else
+      num_items = num_items + 1;
 
-    return num_items;
+  }
+
+  return num_items;
 }
 
 
 function getContentName(arr) {
 
-    let content_name = '';
+  let content_name = '';
 
-    if (arr.length === 1)
-        content_name = arr[0][keyNm];
+  if (arr.length == 1)
+    content_name = arr[0][keyNm];
 
-    return content_name;
+  return content_name;
 }
 
 
