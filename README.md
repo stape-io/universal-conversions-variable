@@ -1,6 +1,6 @@
 # Universal Conversions Variable for Google Tag Manager Web Container
 
-TBD
+Universal Conversions Variable for Google Tag Manager container can map your product array into formats required by platform destinations.
 
 ## Open Source
 
