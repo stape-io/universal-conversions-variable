@@ -1,5 +1,7 @@
 homepage: "https://stape.io/"
 versions:
+  - sha: 97b3cee757f64a8ee18c9fdaa3c5aa2f2c5cf767
+    changeNotes: massive updates
   - sha: ae620ed798c125e8139d8f675f49bb901d52c234
     changeNotes: Google Ads Offline support
   - sha: 829b378051707d890f3f7aa512bbbfa9272cda49

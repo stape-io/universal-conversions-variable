@@ -1,12 +1,4 @@
-﻿___TERMS_OF_SERVICE___
-
-By creating or modifying this file you agree to Google Tag Manager's Community
-Template Gallery Developer Terms of Service available at
-https://developers.google.com/tag-manager/gallery-tos (or such other URL as
-Google may provide), as modified from time to time.
-
-
-___INFO___
+﻿___INFO___
 
 {
   "type": "MACRO",
@@ -14,7 +6,7 @@ ___INFO___
   "version": 1,
   "securityGroups": [],
   "displayName": "Universal Conversions Variable",
-  "description": "Generates the desired parameter from an array.",
+  "description": "Generates the desired parameter from an array.\nby Stape.io",
   "containerContexts": [
     "WEB"
   ]
@@ -61,6 +53,18 @@ ___TEMPLATE_PARAMETERS___
       {
         "value": "gAdsOff",
         "displayValue": "Google Ads Offline"
+      },
+      {
+        "value": "pinterest",
+        "displayValue": "Pinterest"
+      },
+      {
+        "value": "rakuten",
+        "displayValue": "Rakuten"
+      },
+      {
+        "value": "criteo",
+        "displayValue": "Criteo"
       }
     ],
     "simpleValueType": true,
@@ -130,6 +134,27 @@ ___TEMPLATE_PARAMETERS___
       {
         "paramName": "platform",
         "paramValue": "ga4",
+        "type": "EQUALS"
+      }
+    ]
+  },
+  {
+    "type": "RADIO",
+    "name": "rakuten_task",
+    "displayName": "What to return",
+    "radioItems": [
+      {
+        "value": "items",
+        "displayValue": "line_items",
+        "help": "",
+        "subParams": []
+      }
+    ],
+    "simpleValueType": true,
+    "enablingConditions": [
+      {
+        "paramName": "platform",
+        "paramValue": "rakuten",
         "type": "EQUALS"
       }
     ]
@@ -233,7 +258,8 @@ ___TEMPLATE_PARAMETERS___
             ],
             "simpleValueType": true,
             "help": "choose either product or product_group as is required by TikTok events API",
-            "defaultValue": "product"
+            "defaultValue": "product",
+            "enablingConditions": []
           }
         ]
       },
@@ -289,6 +315,58 @@ ___TEMPLATE_PARAMETERS___
   },
   {
     "type": "RADIO",
+    "name": "criteo_task",
+    "displayName": "What to return",
+    "radioItems": [
+      {
+        "value": "items",
+        "displayValue": "items [{ }]"
+      }
+    ],
+    "simpleValueType": true,
+    "enablingConditions": [
+      {
+        "paramName": "platform",
+        "paramValue": "criteo",
+        "type": "EQUALS"
+      }
+    ]
+  },
+  {
+    "type": "RADIO",
+    "name": "pinterest_task",
+    "displayName": "What to return",
+    "radioItems": [
+      {
+        "value": "items",
+        "displayValue": "line_items [{ }]"
+      },
+      {
+        "value": "value",
+        "displayValue": "value",
+        "subParams": [],
+        "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
+      },
+      {
+        "value": "ids",
+        "displayValue": "content_ids [ ]"
+      },
+      {
+        "value": "contents",
+        "displayValue": "contents [{ }]"
+      }
+    ],
+    "simpleValueType": true,
+    "enablingConditions": [
+      {
+        "paramName": "platform",
+        "paramValue": "pinterest",
+        "type": "EQUALS"
+      }
+    ]
+  },
+  {
+    "type": "RADIO",
     "name": "snap_task",
     "displayName": "What to return",
     "radioItems": [
@@ -327,7 +405,7 @@ ___TEMPLATE_PARAMETERS___
         "name": "orderItems",
         "displayName": "Array of Objects",
         "simpleValueType": true,
-        "help": "For example, this can be \u0027products\u0027 array from enhanced ecommerce variable, or any other array of objects",
+        "help": "[{}] any structured array of item objects",
         "valueValidators": [
           {
             "type": "NON_EMPTY"
@@ -421,14 +499,176 @@ ___TEMPLATE_PARAMETERS___
             "type": "EQUALS"
           }
         ]
+      },
+      {
+        "type": "CHECKBOX",
+        "name": "buildCatTree",
+        "checkboxText": "Build Category Tree?",
+        "simpleValueType": true,
+        "help": "If your items have multiple categories, create a tree in \u0027cat1 \u003e cat2 \u003e cat3\u0027 string format",
+        "enablingConditions": [
+          {
+            "paramName": "platform",
+            "paramValue": "rakuten",
+            "type": "EQUALS"
+          }
+        ]
+      },
+      {
+        "type": "TEXT",
+        "name": "keyCatList",
+        "displayName": "Category parameter keys",
+        "simpleValueType": true,
+        "help": "coma separated in order of appearance in tree, like: \u0027cat_key,mykey,custom_var_7\u0027",
+        "enablingConditions": [
+          {
+            "paramName": "buildCatTree",
+            "paramValue": true,
+            "type": "EQUALS"
+          }
+        ]
       }
     ],
     "help": "keys for corresponding parameters within input array"
   },
   {
     "type": "GROUP",
+    "name": "rakDiscountGroup",
+    "displayName": "Discount Configuration",
+    "groupStyle": "ZIPPY_OPEN",
+    "subParams": [
+      {
+        "type": "SELECT",
+        "name": "discConfig",
+        "displayName": "Choose discount configuration method",
+        "macrosInSelect": false,
+        "selectItems": [
+          {
+            "value": "item_level",
+            "displayValue": "From item-level"
+          },
+          {
+            "value": "order_level",
+            "displayValue": "From order-level"
+          },
+          {
+            "value": "none",
+            "displayValue": "None"
+          }
+        ],
+        "simpleValueType": true,
+        "defaultValue": "none"
+      },
+      {
+        "type": "TEXT",
+        "name": "keyDiscItemLevel",
+        "displayName": "Parameter key for item-level discount",
+        "simpleValueType": true,
+        "enablingConditions": [
+          {
+            "paramName": "discConfig",
+            "paramValue": "item_level",
+            "type": "EQUALS"
+          }
+        ],
+        "help": "discount parameter KEY for input array"
+      },
+      {
+        "type": "TEXT",
+        "name": "discOrderLevel",
+        "displayName": "Order-level discount amount",
+        "simpleValueType": true,
+        "help": "order-level discount VALUE",
+        "enablingConditions": [
+          {
+            "paramName": "discConfig",
+            "paramValue": "order_level",
+            "type": "EQUALS"
+          }
+        ]
+      }
+    ],
+    "enablingConditions": [
+      {
+        "paramName": "platform",
+        "paramValue": "rakuten",
+        "type": "EQUALS"
+      }
+    ]
+  },
+  {
+    "type": "GROUP",
+    "name": "rakTaxGroup",
+    "displayName": "Tax Configuration",
+    "groupStyle": "ZIPPY_OPEN",
+    "subParams": [
+      {
+        "type": "SELECT",
+        "name": "taxPriceConfig",
+        "displayName": "Item price tax application",
+        "macrosInSelect": false,
+        "selectItems": [
+          {
+            "value": "priceTaxless",
+            "displayValue": "Item price is taxless"
+          },
+          {
+            "value": "priceDeduct",
+            "displayValue": "Item price needs tax deduction"
+          }
+        ],
+        "simpleValueType": true
+      },
+      {
+        "type": "SELECT",
+        "name": "taxDiscountConfig",
+        "displayName": "Discount tax application",
+        "macrosInSelect": false,
+        "selectItems": [
+          {
+            "value": "discTaxless",
+            "displayValue": "Discount is taxless"
+          },
+          {
+            "value": "discDeduct",
+            "displayValue": "Discount needs tax deduction"
+          }
+        ],
+        "simpleValueType": true
+      },
+      {
+        "type": "TEXT",
+        "name": "taxDeductPercent",
+        "displayName": "Tax %",
+        "simpleValueType": true,
+        "help": "just number, no % symbol",
+        "valueValidators": [],
+        "enablingConditions": [
+          {
+            "paramName": "taxPriceConfig",
+            "paramValue": "priceDeduct",
+            "type": "EQUALS"
+          },
+          {
+            "paramName": "taxDiscountConfig",
+            "paramValue": "discDeduct",
+            "type": "EQUALS"
+          }
+        ]
+      }
+    ],
+    "enablingConditions": [
+      {
+        "paramName": "platform",
+        "paramValue": "rakuten",
+        "type": "EQUALS"
+      }
+    ]
+  },
+  {
+    "type": "GROUP",
     "name": "customParamsGroup",
-    "displayName": "Custom Parameters",
+    "displayName": "Additional/Optional Parameters",
     "groupStyle": "ZIPPY_OPEN",
     "subParams": [
       {
@@ -463,6 +703,11 @@ ___TEMPLATE_PARAMETERS___
         "paramName": "platform",
         "paramValue": "klaviyo",
         "type": "EQUALS"
+      },
+      {
+        "paramName": "platform",
+        "paramValue": "rakuten",
+        "type": "EQUALS"
       }
     ]
   }
@@ -485,12 +730,15 @@ let keyQt = data.keyQt;
 let keyVar = data.keyVar;
 let keyCat = data.keyCat;
 let keyImg = data.keyImg;
-let keyListName = data.keyListName;
-let keyListId = data.keyListId;
 let contentType = data.contentType;
-let task;
-
+let taxDeductPercent = toFixed2(makeNumber(data.taxDeductPercent));
+let task; 
 const customParamMap = data.customParams ? makeTableMap(data.customParams, 'cusKey', 'cusName') : {};
+
+let keyDisc = data.keyDiscItemLevel;
+//let rakTax = makeNumber(data.rakTax);
+
+let keyCatList = data.keyCatList ? data.keyCatList.split(',') : [];
 
 if (!data.orderItems || !data.orderItems.length)
   return ;
@@ -517,12 +765,21 @@ function runTask() {
 
   if (data.klaviyo_task)
     task = data.klaviyo_task;
-
+  
   if (data.snap_task)
     task = data.snap_task;
 
   if (data.gAdsOff_task)
     task = data.gAdsOff_task;
+  
+  if (data.pinterest_task)
+    task = data.pinterest_task;
+  
+  if (data.rakuten_task)
+    task = data.rakuten_task;
+  
+  if (data.criteo_task)
+    task = data.criteo_task;
 
   if (task === 'contents')
     return getContents(data.orderItems, data.platform);
@@ -541,9 +798,31 @@ function runTask() {
 
   if (task === 'items')
     return getItems(data.orderItems, data.platform);
-
+  
   if (task === 'item')
     return getItem(data.orderItems);
+}  
+
+
+function toFixed2(num){
+   return math.round(num * 100) / 100;
+}
+
+
+function makeNumberToFixed2(str) {
+  
+  const dotIndex = str.indexOf('.');
+  
+  if (dotIndex < 0)
+    return makeNumber(str + '.00');
+  
+  let integerPart = str.substring(0, dotIndex);
+  let decimalPart = str.substring(dotIndex + 1, dotIndex + 3);
+  
+  let a = decimalPart[0] ? decimalPart[0] : '0';
+  let b = decimalPart[1] ? decimalPart[1] : '0';
+
+  return makeNumber(integerPart + '.' + a + b);
 }
 
 
@@ -551,7 +830,7 @@ function getItem(arr) {
 
   let cat = [];
   cat.push(arr[0][keyCat]);
-
+      
   let item = {
     'ProductID': arr[0][keyId],
     'ProductName': arr[0][keyNm],
@@ -566,15 +845,15 @@ function getItem(arr) {
 
 
 function getContents(arr, platform) {
-
+  
   let contents = [];
-
+  
   for (let i = 0; i < arr.length; i++) {
-
+    
     let qt = 1;
     if (arr[i][keyQt])
       qt = arr[i][keyQt];
-
+    
     if (platform === 'meta') {
       contents.push({
         'id': arr[i][keyId],
@@ -582,16 +861,18 @@ function getContents(arr, platform) {
         'item_price': arr[i][keyPr]
       });
     }
-
+    
     if (platform === 'tiktok') {
       contents.push({
         'content_id': arr[i][keyId],
         'content_type': contentType,
+        'content_category': arr[i][keyCat],
+        'content_name': arr[i][keyNm],
         'quantity': qt,
-        'price': arr[i][keyPr]
+        'price': arr[i][keyPr] ? makeNumber(arr[i][keyPr]) : 0,
       });
     }
-
+    
     if (platform === 'twitter') {
       contents.push({
         'content_id': arr[i][keyId],
@@ -601,7 +882,14 @@ function getContents(arr, platform) {
         'content_price': arr[i][keyPr]
       });
     }
-
+    
+    if (platform === 'pinterest') {
+      contents.push({
+        'quantity': qt,
+        'item_price': arr[i][keyPr] ? makeString(arr[i][keyPr]) : '0'
+      });
+    }
+        
   }
 
   return contents;
@@ -609,55 +897,66 @@ function getContents(arr, platform) {
 
 
 function getContentIds(arr) {
-
+  
   let content_ids = [];
 
   for (let i = 0; i < arr.length; i++) {
     content_ids.push(arr[i][keyId]);
   }
-
+    
   return content_ids;
 }
 
 
 function getValue(arr) {
-
-  let value = 0;
-
+  
+  let value = 0; 
+  let price;
+  
   for (let i = 0; i < arr.length; i++) {
 
+    price = arr[i][keyPr] ? makeNumber(arr[i][keyPr]) : 0;
+    
+    
     if (arr[i][keyQt]) {
 
        if (getType(arr[i][keyQt]) === 'string')
-         value = value + makeInteger(arr[i][keyQt]) * arr[i][keyPr];
-       else
-         value = value + arr[i][keyQt] * arr[i][keyPr];
-
+         value = value + makeInteger(arr[i][keyQt]) * price;   
+       else             
+         value = value + arr[i][keyQt] * price;
+     
      }
      else
-       value = value + arr[i][keyPr];
+       value = value + price;
   }
-
-  let res = math.round(value * 100) / 100;
+    
+  let res = math.round(value * 100) / 100; 
   return res;
-
 }
 
 
 function getItems(arr, platform) {
 
   let items = [];
-
-
-
+  let totalDiscount = 0;
+  if (data.discConfig === 'order_level') {
+    
+    totalDiscount = makeNumber(data.discOrderLevel);
+    
+    if (data.taxDiscountConfig == 'discDeduct') {
+      totalDiscount = totalDiscount / ((taxDeductPercent / 100) + 1);
+    }
+      
+  }
+  
   for (let i = 0; i < arr.length; i++) {
-
+    
     let qt = 1;
     if (arr[i][keyQt])
-      qt = arr[i][keyQt];
+      qt = makeInteger(arr[i][keyQt]);
 
-    if (platform === 'ga4') {
-
+    if (platform === 'ga4') {    
+      
       let itemObj = {
         'item_id': arr[i][keyId],
         'item_name': arr[i][keyNm],
@@ -665,22 +964,25 @@ function getItems(arr, platform) {
         'price': arr[i][keyPr],
         'item_category': arr[i][keyCat]
       };
-
+      
       for (let prop in customParamMap) {
         if (customParamMap[prop]) {
-          itemObj[customParamMap[prop]] = arr[i][prop];
+          if (prop === 'discountamountqty')
+            itemObj[customParamMap[prop]] = arr[i][prop] * qt;
+          else
+            itemObj[customParamMap[prop]] = arr[i][prop];
         }
-      }
-
-      items.push(itemObj);
-
+      }    
+      
+      items.push(itemObj);      
+      
     }
-
-    if (platform === 'klaviyo') {
-
+    
+    if (platform === 'klaviyo') {    
+      
       let cat = [];
       cat.push(arr[i][keyCat]);
-
+      
       let itemObj = {
         'ProductID': arr[i][keyId],
         'ProductName': arr[i][keyNm],
@@ -691,28 +993,109 @@ function getItems(arr, platform) {
       };
 
       for (let prop in customParamMap) {
-        if (customParamMap[prop]) {
+        if (customParamMap[prop]) { 
           itemObj[customParamMap[prop]] = arr[i][prop];
         }
       }
-
+      
       items.push(itemObj);
 
     }
-
-
-   if (platform === 'gAdsOff') {
-
+    
+    
+    if (platform === 'criteo') {    
+      
+      let itemObj = {
+        'id': arr[i][keyId],
+        'quantity': qt,
+        'price': arr[i][keyPr]
+      };
+          
+      items.push(itemObj);      
+      
+    }
+    
+    
+   if (platform === 'gAdsOff') {    
+      
       items.push({
         'productId': makeString(arr[i][keyId]),
         'quantity': qt,
         'unitPrice': makeNumber(arr[i][keyPr])
       });
     }
+    
+    
+    if (platform === 'pinterest') {
+      items.push({
+        'product_id': arr[i][keyId],
+        'product_name': arr[i][keyNm],
+        'product_quantity': qt,
+        'product_price': arr[i][keyPr] ? makeNumber(arr[i][keyPr]) : 0
+      });
+    }
+    
+    if (platform === 'rakuten') {
+      
+      //let p = arr[i][keyPr];
+      let p = toFixed2(makeNumber(arr[i][keyPr]));
+      let price;
+
+      if (data.taxPriceConfig === 'priceDeduct' && taxDeductPercent && taxDeductPercent > 0) {       
+        let tmp = p / ((taxDeductPercent / 100 ) + 1);
+        price = (math.round(tmp * 100) / 100) * 100 * qt;
+        price = math.round(price * 100) / 100;
+      }
+        
+        
+      if (data.discConfig === 'item_level' && arr[i][keyDisc]) {
+        let tmp;
+        let disc = makeNumber(arr[i][keyDisc]); //.replace(',','')
+        if (data.taxDiscountConfig == 'discDeduct' && taxDeductPercent && taxDeductPercent > 0) {
+          disc = disc / ((taxDeductPercent / 100) + 1);
+        }
+        
+        totalDiscount = toFixed2(makeNumber(totalDiscount) + toFixed2(disc));
+      
+      }
 
 
+      let itemObj = {
+        'sku': arr[i][keyId],
+        'product_name': arr[i][keyNm],
+        'quantity': qt,
+        'amount': price > 0 ? price : toFixed2(p * 100 * qt),
+        'optional_data': {}
+      };
+      
+      
+      if (keyCatList.length > 0) {
+        let catArr = [];
+        keyCatList.forEach(element => catArr.push(arr[i][element]));
+        itemObj.optional_data = { 'category': catArr.join(' > ') };   
+      } 
+      
+      for (let prop in customParamMap) {
+        if (customParamMap[prop]) { 
+          itemObj.optional_data[customParamMap[prop]] = arr[i][prop];
+        }
+      }   
+            
+      items.push(itemObj);
+    }
+    
+  } 
+  
+  if (platform === 'rakuten' && totalDiscount > 0) {
+        
+      items.push({
+        'sku': "Discount",
+        'quantity': "0",
+        'amount': toFixed2(((totalDiscount - (totalDiscount * 2)) * 100)), 
+        'product_name': "Discount"
+      });
   }
-
+  
   return items;
 }
 
@@ -720,11 +1103,11 @@ function getItems(arr, platform) {
 function getNumItems(arr) {
 
   let num_items = 0;
-
+  
   for (let i = 0; i < arr.length; i++) {
-
+    
     if (arr[i][keyQt]) {
-
+    
       if (getType(arr[i][keyQt]) === 'string')
         num_items = num_items + makeInteger(arr[i][keyQt]);
       else
@@ -732,9 +1115,9 @@ function getNumItems(arr) {
     }
     else
       num_items = num_items + 1;
-
+    
   }
-
+    
   return num_items;
 }
 
@@ -742,10 +1125,10 @@ function getNumItems(arr) {
 function getContentName(arr) {
 
   let content_name = '';
-
+  
   if (arr.length == 1)
     content_name = arr[0][keyNm];
-
+  
   return content_name;
 }
 
