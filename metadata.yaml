@@ -1,5 +1,7 @@
 homepage: "https://stape.io/"
 versions:
+  - sha: b9490ec43859023e3bf045f852cdfffd9dcb8dcb
+    changeNotes: Fixed quantity type
   - sha: dda3caf625190b07afc336100ccabda058242605
     changeNotes: Add new platforms
   - sha: 97b3cee757f64a8ee18c9fdaa3c5aa2f2c5cf767
