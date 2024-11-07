@@ -134,7 +134,7 @@ function getContents(arr, platform) {
     
     let qt = 1;
     if (arr[i][keyQt])
-      qt = arr[i][keyQt];
+      qt = makeNumber(arr[i][keyQt]);
     
     if (platform === 'meta') {
       contents.push({
