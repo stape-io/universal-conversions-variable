@@ -536,15 +536,10 @@ ___TEMPLATE_PARAMETERS___
       },
       {
         "type": "TEXT",
-        "name": "keyCat",
-        "displayName": "Product Category",
+        "name": "keyImg",
+        "displayName": "Product Image URL",
         "simpleValueType": true,
         "enablingConditions": [
-          {
-            "paramName": "platform",
-            "paramValue": "ga4",
-            "type": "EQUALS"
-          },
           {
             "paramName": "platform",
             "paramValue": "klaviyo",
@@ -556,11 +551,8 @@ ___TEMPLATE_PARAMETERS___
         "type": "CHECKBOX",
         "name": "buildCatTree",
         "checkboxText": "Build Category Tree?",
-        "type": "TEXT",
-        "name": "keyCat",
-        "displayName": "Product Category",
         "simpleValueType": true,
-        "help": "If your items have multiple categories, create a tree in 'cat1 > cat2 > cat3' string format",
+        "help": "If your items have multiple categories, create a tree in \u0027cat1 \u003e cat2 \u003e cat3\u0027 string format",
         "enablingConditions": [
           {
             "paramName": "platform",
@@ -574,7 +566,7 @@ ___TEMPLATE_PARAMETERS___
         "name": "keyCatList",
         "displayName": "Category parameter keys",
         "simpleValueType": true,
-        "help": "coma separated in order of appearance in tree, like: 'cat_key,mykey,custom_var_7'",
+        "help": "coma separated in order of appearance in tree, like: \u0027cat_key,mykey,custom_var_7\u0027",
         "enablingConditions": [
           {
             "paramName": "buildCatTree",
@@ -707,20 +699,11 @@ ___TEMPLATE_PARAMETERS___
           {
             "paramName": "taxDiscountConfig",
             "paramValue": "discDeduct",
-            "paramName": "taxDiscountConfig",
-            "paramValue": "discDeduct",
             "type": "EQUALS"
           }
         ]
       }
     ],
-    "enablingConditions": [
-      {
-        "paramName": "platform",
-        "paramValue": "rakuten",
-        "type": "EQUALS"
-      }
-    ]
     "enablingConditions": [
       {
         "paramName": "platform",
