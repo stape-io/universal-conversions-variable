@@ -97,7 +97,7 @@ ___TEMPLATE_PARAMETERS___
       },
       {
         "value": "name",
-        "displayValue": "content_name ' '",
+        "displayValue": "content_name \u0027 \u0027",
         "help": "will only return value if there is one object in product array, since content_name parameter is applicable only to single product (type) events"
       },
       {
@@ -277,7 +277,7 @@ ___TEMPLATE_PARAMETERS___
       },
       {
         "value": "name",
-        "displayValue": "content_name ' '",
+        "displayValue": "content_name \u0027 \u0027",
         "help": "will only return value if there is one object in product array, since content_name parameter is applicable only to single product (type) events"
       },
       {
@@ -433,7 +433,8 @@ ___TEMPLATE_PARAMETERS___
         "paramValue": "reddit",
         "type": "EQUALS"
       }
-    ]
+    ],
+    "help": "As described in \u003ca href\u003d\"https://business.reddithelp.com/s/article/manual-conversion-events-with-the-reddit-pixel\"\u003e oficial documentation \u003c/a\u003e"
   },
   {
     "type": "GROUP",
@@ -535,10 +536,15 @@ ___TEMPLATE_PARAMETERS___
       },
       {
         "type": "TEXT",
-        "name": "keyImg",
-        "displayName": "Product Image URL",
+        "name": "keyCat",
+        "displayName": "Product Category",
         "simpleValueType": true,
         "enablingConditions": [
+          {
+            "paramName": "platform",
+            "paramValue": "ga4",
+            "type": "EQUALS"
+          },
           {
             "paramName": "platform",
             "paramValue": "klaviyo",
@@ -550,6 +556,9 @@ ___TEMPLATE_PARAMETERS___
         "type": "CHECKBOX",
         "name": "buildCatTree",
         "checkboxText": "Build Category Tree?",
+        "type": "TEXT",
+        "name": "keyCat",
+        "displayName": "Product Category",
         "simpleValueType": true,
         "help": "If your items have multiple categories, create a tree in 'cat1 > cat2 > cat3' string format",
         "enablingConditions": [
@@ -698,11 +707,20 @@ ___TEMPLATE_PARAMETERS___
           {
             "paramName": "taxDiscountConfig",
             "paramValue": "discDeduct",
+            "paramName": "taxDiscountConfig",
+            "paramValue": "discDeduct",
             "type": "EQUALS"
           }
         ]
       }
     ],
+    "enablingConditions": [
+      {
+        "paramName": "platform",
+        "paramValue": "rakuten",
+        "type": "EQUALS"
+      }
+    ]
     "enablingConditions": [
       {
         "paramName": "platform",
@@ -768,86 +786,51 @@ const makeString = require('makeString');
 const makeTableMap = require('makeTableMap');
 const getType = require('getType');
 const math = require('Math');
+const Object = require('Object');
 
 let keyId = data.keyId;
 let keyPr = data.keyPr;
 let keyNm = data.keyNm;
 let keyQt = data.keyQt;
-let keyVar = data.keyVar;
 let keyCat = data.keyCat;
 let keyImg = data.keyImg;
 let contentType = data.contentType;
 let taxDeductPercent = toFixed2(makeNumber(data.taxDeductPercent));
 let task; 
+let keyCatList = data.keyCatList ? data.keyCatList.split(',') : [];
+let platform = data.platform;
+let inputArray = data.orderItems;
 const customParamMap = data.customParams ? makeTableMap(data.customParams, 'cusKey', 'cusName') : {};
 
 let keyDisc = data.keyDiscItemLevel;
 //let rakTax = makeNumber(data.rakTax);
 
-let keyCatList = data.keyCatList ? data.keyCatList.split(',') : [];
 
-if (!data.orderItems || !data.orderItems.length)
-  return ;
-else
-  return runTask();
+
+
+
+/* Main Logic */
+
+if (inputArray.length) return runTask();
+else return;
 
 
 function runTask() {
+ let dataKeys = Object.keys(data);
+ dataKeys.forEach(key => {
+   if(key.indexOf('_task') > 0 && data[key]) task = data[key];
+ });
 
-  if (data.meta_task)
-    task = data.meta_task;
-
-  if (data.ga4_task)
-    task = data.ga4_task;
-
-  if (data.tiktok_task)
-    task = data.tiktok_task;
-
-  if (data.twitter_task)
-    task = data.twitter_task;
-
-  if (data.microsoft_task)
-    task = data.microsoft_task;
-
-  if (data.klaviyo_task)
-    task = data.klaviyo_task;
-  
-  if (data.snap_task)
-    task = data.snap_task;
-
-  if (data.gAdsOff_task)
-    task = data.gAdsOff_task;
-  
-  if (data.pinterest_task)
-    task = data.pinterest_task;
-  
-  if (data.rakuten_task)
-    task = data.rakuten_task;
-  
-  if (data.criteo_task)
-    task = data.criteo_task;
-
-  if (task === 'contents')
-    return getContents(data.orderItems, data.platform);
-
-  if (task === 'ids')
-    return getContentIds(data.orderItems);
-
-  if (task === 'name')
-    return getContentName(data.orderItems);
-
-  if (task === 'value')
-    return getValue(data.orderItems);
-
-  if (task === 'numitems')
-    return getNumItems(data.orderItems);
-
-  if (task === 'items')
-    return getItems(data.orderItems, data.platform);
-  
-  if (task === 'item')
-    return getItem(data.orderItems);
-}  
+  switch(task){
+    case 'contents': return getContents(inputArray, platform);
+    case 'ids': return getContentIds(inputArray);
+    case 'name': return getContentName(inputArray);
+    case 'value': return getValue(inputArray);
+    case 'numitems': return getNumItems(inputArray);
+    case 'items': return getItems(inputArray, platform);
+    case 'item': return getItem(inputArray);
+  }
+}
 
 
 function toFixed2(num){
@@ -855,20 +838,25 @@ function toFixed2(num){
 }
 
 
-function makeNumberToFixed2(str) {
-  
-  const dotIndex = str.indexOf('.');
-  
-  if (dotIndex < 0)
-    return makeNumber(str + '.00');
-  
-  let integerPart = str.substring(0, dotIndex);
-  let decimalPart = str.substring(dotIndex + 1, dotIndex + 3);
-  
-  let a = decimalPart[0] ? decimalPart[0] : '0';
-  let b = decimalPart[1] ? decimalPart[1] : '0';
+function getNumItems(arr) {
 
-  return makeNumber(integerPart + '.' + a + b);
+  const num_items = arr.reduce((acc,curr)=>{return acc + curr[keyQt];},0);
+    
+  return num_items;
+}
+
+
+function getContentName(arr) {
+  if(!arr.length) return;
+  return arr[0][keyNm];
+}
+
+
+function getContentIds(arr) {
+
+  let content_ids = arr.map(item => item[keyId]);
+
+  return content_ids;
 }
 
 
@@ -889,6 +877,12 @@ function getItem(arr) {
 }
 
 
+function getValue(arr) {
+  
+  let value = arr.reduce( (acc,curr) => {return acc + curr[keyQt]*curr[keyPr];},0); 
+
+  return toFixed2(value);
+}
 
 function getContents(arr, platform) {
   
@@ -910,7 +904,7 @@ function getContents(arr, platform) {
     
     if (platform === 'tiktok') {
       contents.push({
-        'content_id': arr[i][keyId],
+        'content_id': makeString(arr[i][keyId]),
         'content_type': contentType,
         'content_category': arr[i][keyCat],
         'content_name': arr[i][keyNm],
@@ -947,38 +941,14 @@ function getContentIds(arr) {
   let content_ids = [];
 
   for (let i = 0; i < arr.length; i++) {
-    content_ids.push(arr[i][keyId]);
+    content_ids.push(makeString(arr[i][keyId]));
   }
     
   return content_ids;
 }
 
 
-function getValue(arr) {
-  
-  let value = 0; 
-  let price;
-  
-  for (let i = 0; i < arr.length; i++) {
 
-    price = arr[i][keyPr] ? makeNumber(arr[i][keyPr]) : 0;
-    
-    
-    if (arr[i][keyQt]) {
-
-       if (getType(arr[i][keyQt]) === 'string')
-         value = value + makeInteger(arr[i][keyQt]) * price;   
-       else             
-         value = value + arr[i][keyQt] * price;
-     
-     }
-     else
-       value = value + price;
-  }
-    
-  let res = math.round(value * 100) / 100; 
-  return res;
-}
 
 
 function getItems(arr, platform) {
@@ -1081,6 +1051,14 @@ function getItems(arr, platform) {
       });
     }
     
+    if (platform === 'reddit') {
+      items.push({
+      'id': arr[i][keyId],
+      'category': arr[i][keyCat],
+      'name': arr[i][keyNm]
+      });
+    }
+
     if (platform === 'rakuten') {
       
       //let p = arr[i][keyPr];
@@ -1143,39 +1121,6 @@ function getItems(arr, platform) {
   }
   
   return items;
-}
-
-
-function getNumItems(arr) {
-
-  let num_items = 0;
-  
-  for (let i = 0; i < arr.length; i++) {
-    
-    if (arr[i][keyQt]) {
-    
-      if (getType(arr[i][keyQt]) === 'string')
-        num_items = num_items + makeInteger(arr[i][keyQt]);
-      else
-        num_items = num_items + arr[i][keyQt];
-    }
-    else
-      num_items = num_items + 1;
-    
-  }
-    
-  return num_items;
-}
-
-
-function getContentName(arr) {
-
-  let content_name = '';
-  
-  if (arr.length == 1)
-    content_name = arr[0][keyNm];
-  
-  return content_name;
 }
 
 
