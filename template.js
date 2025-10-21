@@ -269,6 +269,14 @@ function getItems(arr, platform) {
       });
     }
     
+    if (platform === 'reddit') {
+      items.push({
+      'id': arr[i][keyId],
+      'category': arr[i][keyCat],
+      'name': arr[i][keyNm]
+      });
+    }
+
     if (platform === 'rakuten') {
       
       //let p = arr[i][keyPr];

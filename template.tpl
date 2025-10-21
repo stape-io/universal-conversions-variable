@@ -77,10 +77,6 @@ ___TEMPLATE_PARAMETERS___
       {
         "value": "reddit",
         "displayValue": "Reddit"
-      },
-      {
-        "value": "reddit",
-        "displayValue": "Reddit"
       }
     ],
     "simpleValueType": true,
@@ -161,7 +157,7 @@ ___TEMPLATE_PARAMETERS___
     "radioItems": [
       {
         "value": "items",
-        "displayValue": "lineitems",
+        "displayValue": "line_items",
         "help": "",
         "subParams": []
       }
@@ -173,8 +169,7 @@ ___TEMPLATE_PARAMETERS___
         "paramValue": "rakuten",
         "type": "EQUALS"
       }
-    ],
-    "help": "As described in <a href=https://go.rakutenadvertising.com/hubfs/rakuten-advertising-performance-tag-gtm-template-integration-guide.pdf> official documentation </a>."
+    ]
   },
   {
     "type": "RADIO",
@@ -384,35 +379,6 @@ ___TEMPLATE_PARAMETERS___
   },
   {
     "type": "RADIO",
-    "name": "reddit_task",
-    "displayName": "What to return",
-    "radioItems": [
-      {
-        "value": "value",
-        "displayValue": "value",
-        "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
-      },
-      {
-        "value": "numitems",
-        "displayValue": "itemCount",
-        "subParams": []
-      },
-      {
-        "value": "items",
-        "displayValue": "products"
-      }
-    ],
-    "simpleValueType": true,
-    "enablingConditions": [
-      {
-        "paramName": "platform",
-        "paramValue": "reddit",
-        "type": "EQUALS"
-      }
-    ]
-  },
-  {
-    "type": "RADIO",
     "name": "snap_task",
     "displayName": "What to return",
     "radioItems": [
@@ -480,19 +446,10 @@ ___TEMPLATE_PARAMETERS___
         "name": "orderItems",
         "displayName": "Array of Objects",
         "simpleValueType": true,
-        "help": "[{}] any structured array of item object",
+        "help": "[{}] any structured array of item objects",
         "valueValidators": [
           {
-            "type": "NON_EMPTY",
-            "errorMessage": "Empty value not allowed"
-          },
-          {
-            "type": "TABLE_ROW_COUNT",
-            "args": [
-              1,
-              300
-            ],
-            "errorMessage": "Input array must have at least one entry"
+            "type": "NON_EMPTY"
           }
         ]
       }
@@ -550,76 +507,9 @@ ___TEMPLATE_PARAMETERS___
       },
       {
         "type": "TEXT",
-        "name": "keyImg",
-        "displayName": "Product Image URL",
+        "name": "keyCat",
+        "displayName": "Product Category",
         "simpleValueType": true,
-        "enablingConditions": [
-          {
-            "paramName": "platform",
-            "paramValue": "klaviyo",
-            "type": "EQUALS"
-          }
-        ]
-      },
-      {
-        "type": "TEXT",
-        "name": "keyBrand",
-        "displayName": "Product Brand",
-        "simpleValueType": true,
-        "enablingConditions": [
-          {
-            "paramName": "platform",
-            "paramValue": "ga4",
-            "type": "EQUALS"
-          }
-        ],
-        "help": "Insert the key for product brand"
-      },
-      {
-        "type": "GROUP",
-        "name": "categoryGroup",
-        "displayName": "",
-        "groupStyle": "NO_ZIPPY",
-        "subParams": [
-          {
-            "type": "TEXT",
-            "name": "keyCat",
-            "displayName": "Product Category",
-            "simpleValueType": true,
-            "enablingConditions": [],
-            "help": "Category Key as it appears in your Input Array. \n<br>\n<br>\nIf there are multiple Category Keys in your Input Array, add them all comma separated respecting its hierarchy (from broader to narrower).\n<br>\n<br>\nExample: \"category, category_2, category_3\"",
-            "valueValidators": []
-          },
-          {
-            "type": "CHECKBOX",
-            "name": "multipleCat",
-            "checkboxText": "Multiple Categories in single Key?",
-            "simpleValueType": true,
-            "help": "Check this box if you have a <strong> single Category Key </strong> pointing to a string of multiple categories separated by a custom separator, and provide the separator below. \n<br>\n<br>\nIf it points to an Array, you don't need to check this box.\n<br>\n<br>\n<strong>Example:</strong><br>\n[{<br>\n...<br>\n categoryTree: cat1/cat2/cat3,<br>\n...<br>\n}]<br><br>\n<strong>Separator:</strong> /",
-            "subParams": [
-              {
-                "type": "TEXT",
-                "name": "catSeparator",
-                "displayName": "Separator",
-                "simpleValueType": true,
-                "enablingConditions": [
-                  {
-                    "paramName": "multipleCat",
-                    "paramValue": true,
-                    "type": "EQUALS"
-                  }
-                ],
-                "help": "Enter your category separator.",
-                "valueValidators": [
-                  {
-                    "type": "NON_EMPTY"
-                  }
-                ]
-              }
-            ],
-            "enablingConditions": []
-          }
-        ],
         "enablingConditions": [
           {
             "paramName": "platform",
@@ -640,16 +530,186 @@ ___TEMPLATE_PARAMETERS___
             "paramName": "platform",
             "paramValue": "reddit",
             "type": "EQUALS"
-          },
+          }
+        ]
+      },
+      {
+        "type": "TEXT",
+        "name": "keyImg",
+        "displayName": "Product Image URL",
+        "simpleValueType": true,
+        "enablingConditions": [
+          {
+            "paramName": "platform",
+            "paramValue": "klaviyo",
+            "type": "EQUALS"
+          }
+        ]
+      },
+      {
+        "type": "CHECKBOX",
+        "name": "buildCatTree",
+        "checkboxText": "Build Category Tree?",
+        "simpleValueType": true,
+        "help": "If your items have multiple categories, create a tree in 'cat1 > cat2 > cat3' string format",
+        "enablingConditions": [
           {
             "paramName": "platform",
             "paramValue": "rakuten",
             "type": "EQUALS"
           }
         ]
+      },
+      {
+        "type": "TEXT",
+        "name": "keyCatList",
+        "displayName": "Category parameter keys",
+        "simpleValueType": true,
+        "help": "coma separated in order of appearance in tree, like: 'cat_key,mykey,custom_var_7'",
+        "enablingConditions": [
+          {
+            "paramName": "buildCatTree",
+            "paramValue": true,
+            "type": "EQUALS"
+          }
+        ]
       }
     ],
     "help": "keys for corresponding parameters within input array"
+  },
+  {
+    "type": "GROUP",
+    "name": "rakDiscountGroup",
+    "displayName": "Discount Configuration",
+    "groupStyle": "ZIPPY_OPEN",
+    "subParams": [
+      {
+        "type": "SELECT",
+        "name": "discConfig",
+        "displayName": "Choose discount configuration method",
+        "macrosInSelect": false,
+        "selectItems": [
+          {
+            "value": "item_level",
+            "displayValue": "From item-level"
+          },
+          {
+            "value": "order_level",
+            "displayValue": "From order-level"
+          },
+          {
+            "value": "none",
+            "displayValue": "None"
+          }
+        ],
+        "simpleValueType": true,
+        "defaultValue": "none"
+      },
+      {
+        "type": "TEXT",
+        "name": "keyDiscItemLevel",
+        "displayName": "Parameter key for item-level discount",
+        "simpleValueType": true,
+        "enablingConditions": [
+          {
+            "paramName": "discConfig",
+            "paramValue": "item_level",
+            "type": "EQUALS"
+          }
+        ],
+        "help": "discount parameter KEY for input array"
+      },
+      {
+        "type": "TEXT",
+        "name": "discOrderLevel",
+        "displayName": "Order-level discount amount",
+        "simpleValueType": true,
+        "help": "order-level discount VALUE",
+        "enablingConditions": [
+          {
+            "paramName": "discConfig",
+            "paramValue": "order_level",
+            "type": "EQUALS"
+          }
+        ]
+      }
+    ],
+    "enablingConditions": [
+      {
+        "paramName": "platform",
+        "paramValue": "rakuten",
+        "type": "EQUALS"
+      }
+    ]
+  },
+  {
+    "type": "GROUP",
+    "name": "rakTaxGroup",
+    "displayName": "Tax Configuration",
+    "groupStyle": "ZIPPY_OPEN",
+    "subParams": [
+      {
+        "type": "SELECT",
+        "name": "taxPriceConfig",
+        "displayName": "Item price tax application",
+        "macrosInSelect": false,
+        "selectItems": [
+          {
+            "value": "priceTaxless",
+            "displayValue": "Item price is taxless"
+          },
+          {
+            "value": "priceDeduct",
+            "displayValue": "Item price needs tax deduction"
+          }
+        ],
+        "simpleValueType": true
+      },
+      {
+        "type": "SELECT",
+        "name": "taxDiscountConfig",
+        "displayName": "Discount tax application",
+        "macrosInSelect": false,
+        "selectItems": [
+          {
+            "value": "discTaxless",
+            "displayValue": "Discount is taxless"
+          },
+          {
+            "value": "discDeduct",
+            "displayValue": "Discount needs tax deduction"
+          }
+        ],
+        "simpleValueType": true
+      },
+      {
+        "type": "TEXT",
+        "name": "taxDeductPercent",
+        "displayName": "Tax %",
+        "simpleValueType": true,
+        "help": "just number, no % symbol",
+        "valueValidators": [],
+        "enablingConditions": [
+          {
+            "paramName": "taxPriceConfig",
+            "paramValue": "priceDeduct",
+            "type": "EQUALS"
+          },
+          {
+            "paramName": "taxDiscountConfig",
+            "paramValue": "discDeduct",
+            "type": "EQUALS"
+          }
+        ]
+      }
+    ],
+    "enablingConditions": [
+      {
+        "paramName": "platform",
+        "paramValue": "rakuten",
+        "type": "EQUALS"
+      }
+    ]
   },
   {
     "type": "GROUP",
@@ -672,8 +732,7 @@ ___TEMPLATE_PARAMETERS___
             "defaultValue": "",
             "displayName": "Custom parameter name to return",
             "name": "cusName",
-            "type": "TEXT",
-            "isUnique": true
+            "type": "TEXT"
           }
         ],
         "newRowButtonText": "Add Custom Parameter",
