@@ -1,5 +1,8 @@
-homepage: "https://stape.io/"
+homepage: 'https://stape.io/'
+documentation: 'https://github.com/stape-io/universal-conversions-variable'
 versions:
+  - sha: 1effdefd3dceb2231152dab2618a0e350445fa6f
+    changeNotes: Added Reddit as a supported platform.
   - sha: b9490ec43859023e3bf045f852cdfffd9dcb8dcb
     changeNotes: Fixed quantity type
   - sha: dda3caf625190b07afc336100ccabda058242605
