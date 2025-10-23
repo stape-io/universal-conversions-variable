@@ -6,38 +6,38 @@ const getType = require('getType');
 const math = require('Math');
 const Object = require('Object');
 
-let keyId = data.keyId;
-let keyPr = data.keyPr;
-let keyNm = data.keyNm;
-let keyQt = data.keyQt;
-let keyCat = data.keyCat;
-let keyImg = data.keyImg;
-let contentType = data.contentType;
-let taxDeductPercent = toFixed2(makeNumber(data.taxDeductPercent));
-let task; 
-let keyCatList = data.keyCatList ? data.keyCatList.split(',') : [];
-let platform = data.platform;
-let inputArray = data.orderItems;
+const keyId = data.keyId;
+const keyPr = data.keyPr;
+const keyNm = data.keyNm;
+const keyQt = data.keyQt;
+const keyCat = data.keyCat;
+const keyImg = data.keyImg;
+const contentType = data.contentType;
+const taxDeductPercent = toFixed2(makeNumber(data.taxDeductPercent));
+const keyDisc = data.keyDiscItemLevel;
+const task =''; 
+
 const customParamMap = data.customParams ? makeTableMap(data.customParams, 'cusKey', 'cusName') : {};
+const keyCatList = data.keyCatList ? data.keyCatList.split(',') : [];
+const inputArray = data.orderItems;
 
-let keyDisc = data.keyDiscItemLevel;
 //let rakTax = makeNumber(data.rakTax);
-
-
-
-
 
 /* Main Logic */
 
-if (inputArray.length) return runTask();
+if (getType(inputArray) === 'array' && inputArray.length) return runTask();
 else return;
 
 
 function runTask() {
- let dataKeys = Object.keys(data);
- dataKeys.forEach(key => {
-   if(key.indexOf('_task') > 0 && data[key]) task = data[key];
- });
+ const platform = data.platform;
+ const dataKeys = Object.keys(data);
+for (const key of dataKeys) {
+  if (endsWith(key, '_task') && data[key]) {
+    task = data[key];
+    break;
+  }
+}
 
   switch(task){
     case 'contents': return getContents(inputArray, platform);
@@ -55,24 +55,28 @@ function toFixed2(num){
    return math.round(num * 100) / 100;
 }
 
+function endsWith(str, suffix) {
+  return str.indexOf(suffix, str.length - suffix.length) !== -1;
+}
 
 function getNumItems(arr) {
-
-  const num_items = arr.reduce((acc,curr)=>{return acc + curr[keyQt];},0);
+  const num_items = arr.reduce((acc,curr)=>{
+    const quantity = curr[keyQt] ? makeInteger(curr[keyQt]) : 1;
+    return acc + quantity;},0);
     
   return num_items;
 }
 
 
 function getContentName(arr) {
-  if(!arr.length) return;
+  if (arr.length !== 1) return '';
   return arr[0][keyNm];
 }
 
 
 function getContentIds(arr) {
 
-  let content_ids = arr.map(item => item[keyId]);
+  const content_ids = arr.map(item => item[keyId]);
 
   return content_ids;
 }
@@ -97,8 +101,11 @@ function getItem(arr) {
 
 function getValue(arr) {
   
-  let value = arr.reduce( (acc,curr) => {return acc + curr[keyQt]*curr[keyPr];},0); 
-
+const value = arr.reduce((acc, curr) => {
+    const itemPrice = curr[keyPr] ? makeNumber(curr[keyPr]) : 0;
+    const itemQuantity = curr[keyQt];
+    return acc + (itemQuantity ? makeInteger(itemQuantity) * itemPrice : itemPrice);
+  }, 0);
   return toFixed2(value);
 }
 
@@ -152,21 +159,6 @@ function getContents(arr, platform) {
 
   return contents;
 }
-
-
-function getContentIds(arr) {
-  
-  let content_ids = [];
-
-  for (let i = 0; i < arr.length; i++) {
-    content_ids.push(makeString(arr[i][keyId]));
-  }
-    
-  return content_ids;
-}
-
-
-
 
 
 function getItems(arr, platform) {
