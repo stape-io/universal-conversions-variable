@@ -1,6 +1,8 @@
 homepage: 'https://stape.io/'
 documentation: 'https://github.com/stape-io/universal-conversions-variable'
 versions:
+  - sha: 74ea5424f71368fab0a3efeb686664b78a7dd771
+    changeNotes: Added flexible item ID formatting options (SKU, Variant, Custom Shopify).
   - sha: 1effdefd3dceb2231152dab2618a0e350445fa6f
     changeNotes: Added Reddit as a supported platform.
   - sha: b9490ec43859023e3bf045f852cdfffd9dcb8dcb
