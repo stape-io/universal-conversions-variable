@@ -1,4 +1,4 @@
-﻿___TERMS_OF_SERVICE___
+___TERMS_OF_SERVICE___
 
 By creating or modifying this file you agree to Google Tag Manager's Community
 Template Gallery Developer Terms of Service available at
@@ -10,15 +10,19 @@ ___INFO___
 
 {
   "type": "MACRO",
-  "id": "cvt_temp_public_id",
+  "id": "cvt_WF8HR",
   "version": 1,
-  "securityGroups": [],
   "displayName": "Universal Conversions Variable",
-  "categories": ["UTILITY", "CONVERSIONS", "REMARKETING"],
+  "categories": [
+    "UTILITY",
+    "CONVERSIONS",
+    "REMARKETING"
+  ],
   "description": "Generates the desired parameter from an array.\nBy stape.io.",
   "containerContexts": [
     "WEB"
-  ]
+  ],
+  "securityGroups": []
 }
 
 
@@ -758,6 +762,49 @@ ___TEMPLATE_PARAMETERS___
         "type": "EQUALS"
       }
     ]
+  },
+  {
+    "type": "SELECT",
+    "name": "idFormatType",
+    "displayName": "Product ID Format",
+    "macrosInSelect": true,
+    "selectItems": [
+      {
+        "value": "default",
+        "displayValue": "Default (use \u0027Product ID/SKU\u0027 field)"
+      },
+      {
+        "value": "variantId",
+        "displayValue": "Variant ID (use \u0027Item Variant ID\u0027 field)"
+      },
+      {
+        "value": "sku",
+        "displayValue": "SKU (use \u0027Item SKU\u0027 field)"
+      },
+      {
+        "value": "customShopify",
+        "displayValue": "Custom Shopify (shopify_MARKET_prod_var)"
+      }
+    ],
+    "simpleValueType": true
+  },
+  {
+    "type": "TEXT",
+    "name": "keyVariantId",
+    "displayName": "Item Variant ID Key",
+    "simpleValueType": true
+  },
+  {
+    "type": "TEXT",
+    "name": "keySku",
+    "displayName": "Item SKU Key",
+    "simpleValueType": true
+  },
+  {
+    "type": "TEXT",
+    "name": "marketCode",
+    "displayName": "ISO Market Code (for Custom Shopify) e.g., GB, US",
+    "simpleValueType": true
   }
 ]
 
@@ -775,6 +822,7 @@ const Object = require('Object');
 /*==============================================================================
 ==============================================================================*/
 
+// Original Key fields
 const keyId = data.keyId;
 const keyPr = data.keyPr;
 const keyNm = data.keyNm;
@@ -784,6 +832,14 @@ const keyImg = data.keyImg;
 const contentType = data.contentType;
 const taxDeductPercent = toFixed2(makeNumber(data.taxDeductPercent));
 const keyDisc = data.keyDiscItemLevel;
+
+// --- NEW FIELDS ---
+const idFormat = data.idFormatType;
+const keySku = data.keySku;
+const keyVariantId = data.keyVariantId;
+const market = data.marketCode || '';
+// --- END NEW FIELDS ---
+
 const customParamMap = data.customParams
   ? makeTableMap(data.customParams, 'cusKey', 'cusName')
   : {};
@@ -841,7 +897,9 @@ function getContentName(arr) {
 }
 
 function getContentIds(arr) {
-  const content_ids = arr.map((item) => item[keyId]);
+  // --- MODIFIED ---
+  const content_ids = arr.map((item) => getFormattedId(item));
+  // --- END MODIFIED ---
   return content_ids;
 }
 
@@ -850,7 +908,9 @@ function getItem(arr) {
   cat.push(arr[0][keyCat]);
 
   let item = {
-    ProductID: arr[0][keyId],
+    // --- MODIFIED ---
+    ProductID: getFormattedId(arr[0]),
+    // --- END MODIFIED ---
     ProductName: arr[0][keyNm],
     Price: arr[0][keyPr],
     ImageURL: arr[0][keyImg],
@@ -878,7 +938,9 @@ function getContents(arr, platform) {
 
     if (platform === 'meta') {
       contents.push({
-        id: arr[i][keyId],
+        // --- MODIFIED ---
+        id: getFormattedId(arr[i]),
+        // --- END MODIFIED ---
         quantity: qt,
         item_price: arr[i][keyPr]
       });
@@ -886,7 +948,9 @@ function getContents(arr, platform) {
 
     if (platform === 'tiktok') {
       contents.push({
-        content_id: makeString(arr[i][keyId]),
+        // --- MODIFIED ---
+        content_id: getFormattedId(arr[i]),
+        // --- END MODIFIED ---
         content_type: contentType,
         content_category: arr[i][keyCat],
         content_name: arr[i][keyNm],
@@ -897,7 +961,9 @@ function getContents(arr, platform) {
 
     if (platform === 'twitter') {
       contents.push({
-        content_id: arr[i][keyId],
+        // --- MODIFIED ---
+        content_id: getFormattedId(arr[i]),
+        // --- END MODIFIED ---
         content_name: arr[i][keyNm],
         content_type: arr[i][keyCat],
         num_items: qt,
@@ -909,6 +975,7 @@ function getContents(arr, platform) {
       contents.push({
         quantity: qt,
         item_price: arr[i][keyPr] ? makeString(arr[i][keyPr]) : '0'
+        // Pinterest 'contents' array doesn't use ID
       });
     }
   }
@@ -933,7 +1000,9 @@ function getItems(arr, platform) {
 
     if (platform === 'ga4') {
       let itemObj = {
-        item_id: arr[i][keyId],
+        // --- MODIFIED ---
+        item_id: getFormattedId(arr[i]),
+        // --- END MODIFIED ---
         item_name: arr[i][keyNm],
         quantity: qt,
         price: arr[i][keyPr],
@@ -955,7 +1024,9 @@ function getItems(arr, platform) {
       cat.push(arr[i][keyCat]);
 
       let itemObj = {
-        ProductID: arr[i][keyId],
+        // --- MODIFIED ---
+        ProductID: getFormattedId(arr[i]),
+        // --- END MODIFIED ---
         ProductName: arr[i][keyNm],
         Quantity: qt,
         ItemPrice: arr[i][keyPr],
@@ -974,7 +1045,9 @@ function getItems(arr, platform) {
 
     if (platform === 'criteo') {
       let itemObj = {
-        id: arr[i][keyId],
+        // --- MODIFIED ---
+        id: getFormattedId(arr[i]),
+        // --- END MODIFIED ---
         quantity: qt,
         price: arr[i][keyPr]
       };
@@ -984,7 +1057,9 @@ function getItems(arr, platform) {
 
     if (platform === 'gAdsOff') {
       items.push({
-        productId: makeString(arr[i][keyId]),
+        // --- MODIFIED ---
+        productId: getFormattedId(arr[i]),
+        // --- END MODIFIED ---
         quantity: qt,
         unitPrice: makeNumber(arr[i][keyPr])
       });
@@ -992,7 +1067,9 @@ function getItems(arr, platform) {
 
     if (platform === 'pinterest') {
       items.push({
-        product_id: arr[i][keyId],
+        // --- MODIFIED ---
+        product_id: getFormattedId(arr[i]),
+        // --- END MODIFIED ---
         product_name: arr[i][keyNm],
         product_quantity: qt,
         product_price: arr[i][keyPr] ? makeNumber(arr[i][keyPr]) : 0
@@ -1001,7 +1078,9 @@ function getItems(arr, platform) {
 
     if (platform === 'reddit') {
       items.push({
-        id: arr[i][keyId],
+        // --- MODIFIED ---
+        id: getFormattedId(arr[i]),
+        // --- END MODIFIED ---
         category: arr[i][keyCat],
         name: arr[i][keyNm]
       });
@@ -1029,7 +1108,9 @@ function getItems(arr, platform) {
       }
 
       let itemObj = {
-        sku: arr[i][keyId],
+        // --- MODIFIED ---
+        sku: getFormattedId(arr[i]), // Rakuten uses SKU as the main ID
+        // --- END MODIFIED ---
         product_name: arr[i][keyNm],
         quantity: qt,
         amount: price > 0 ? price : toFixed2(p * 100 * qt),
@@ -1067,6 +1148,42 @@ function getItems(arr, platform) {
 /*==============================================================================
   Helpers
 ==============================================================================*/
+
+// --- NEW HELPER FUNCTION ---
+// This function builds the ID based on the user's selection
+function getFormattedId(item) {
+  // 1. Get the default ID (from the 'keyId' field) as a fallback
+  const defaultId = item[keyId] ? makeString(item[keyId]) : undefined;
+
+  // 2. Check the format dropdown
+  switch (idFormat) {
+    case 'sku':
+      // Use 'keySku' field if available, otherwise fall back to default
+      return item[keySku] ? makeString(item[keySku]) : defaultId;
+
+    case 'variantId':
+      // Use 'keyVariantId' field if available, otherwise fall back to default
+      return item[keyVariantId] ? makeString(item[keyVariantId]) : defaultId;
+
+    case 'customShopify':
+      // Use 'keyId' (as Product) and 'keyVariantId' (as Variant)
+      const prodId = item[keyId];
+      const varId = item[keyVariantId];
+
+      if (prodId && varId) {
+        // Build the custom string
+        return 'shopify_' + market + '_' + makeString(prodId) + '_' + makeString(varId);
+      }
+      // If data is missing, fall back to default
+      return defaultId;
+    
+    case 'default':
+    default:
+      // Return the default ID
+      return defaultId;
+  }
+}
+// --- END NEW HELPER FUNCTION ---
 
 function toFixed2(num) {
   return math.round(num * 100) / 100;
