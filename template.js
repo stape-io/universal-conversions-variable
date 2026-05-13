@@ -235,7 +235,7 @@ function getItems(arr, platform) {
 
     if (platform === 'reddit') {
       items.push({
-        id: arr[i][keyId],
+        id: makeString(arr[i][keyId]),
         category: arr[i][keyCat],
         name: arr[i][keyNm]
       });
