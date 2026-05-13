@@ -120,7 +120,7 @@ function getContents(arr, platform) {
 
     if (platform === 'tiktok') {
       contents.push({
-        content_id: makeString(arr[i][keyId]),
+        content_id: arr[i][keyId] ? makeString(arr[i][keyId]) : undefined,
         content_type: contentType,
         content_category: arr[i][keyCat],
         content_name: arr[i][keyNm],
@@ -218,7 +218,7 @@ function getItems(arr, platform) {
 
     if (platform === 'gAdsOff') {
       items.push({
-        productId: makeString(arr[i][keyId]),
+        productId: arr[i][keyId] ? makeString(arr[i][keyId]) : undefined,
         quantity: qt,
         unitPrice: makeNumber(arr[i][keyPr])
       });
@@ -235,7 +235,7 @@ function getItems(arr, platform) {
 
     if (platform === 'reddit') {
       items.push({
-        id: arr[i][keyId],
+        id: arr[i][keyId] ? makeString(arr[i][keyId]) : undefined,
         category: arr[i][keyCat],
         name: arr[i][keyNm]
       });
