@@ -1,8 +1,8 @@
 homepage: 'https://stape.io/'
 documentation: 'https://github.com/stape-io/universal-conversions-variable'
 versions:
-  - sha: a423d13e4dc34225ddd0d3d31ded026f272658f9
-    changeNotes: Fix Reddit Product ID type.
+  - sha: da6c126717e501adee0b70267f36d36e67758d9b
+    changeNotes: Fix Reddit Product ID type. Added check for falsy values before stringifying other vendor IDs.
   - sha: 1effdefd3dceb2231152dab2618a0e350445fa6f
     changeNotes: Added Reddit as a supported platform.
   - sha: b9490ec43859023e3bf045f852cdfffd9dcb8dcb
