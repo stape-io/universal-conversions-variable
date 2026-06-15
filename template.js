@@ -1,3 +1,4 @@
+const copyFromDataLayer = require('copyFromDataLayer');
 const makeInteger = require('makeInteger');
 const makeNumber = require('makeNumber');
 const makeString = require('makeString');
@@ -15,7 +16,6 @@ const keyNm = data.keyNm;
 const keyQt = data.keyQt;
 const keyCat = data.keyCat;
 const keyImg = data.keyImg;
-const contentType = data.contentType;
 const taxDeductPercent = toFixed2(makeNumber(data.taxDeductPercent));
 const keyDisc = data.keyDiscItemLevel;
 const customParamMap = data.customParams
@@ -95,11 +95,19 @@ function getItem(arr) {
 }
 
 function getValue(arr) {
+  const platform = data.platform;
+  const keyCurrency = data.keyCurrency || 'currency';
+  const currency = arr[0][keyCurrency] || copyFromDataLayer(keyCurrency);
   const value = arr.reduce((acc, curr) => {
     const itemPrice = curr[keyPr] ? makeNumber(curr[keyPr]) : 0;
     const itemQuantity = curr[keyQt];
     return acc + (itemQuantity ? makeInteger(itemQuantity) * itemPrice : itemPrice);
   }, 0);
+
+  if (platform === 'openai') {
+    return convertCurrencyValueToMinorUnit(value, currency);
+  }
+
   return toFixed2(value);
 }
 
@@ -119,6 +127,7 @@ function getContents(arr, platform) {
     }
 
     if (platform === 'tiktok') {
+      const contentType = data.contentType;
       contents.push({
         content_id: arr[i][keyId] ? makeString(arr[i][keyId]) : undefined,
         content_type: contentType,
@@ -143,6 +152,21 @@ function getContents(arr, platform) {
       contents.push({
         quantity: qt,
         item_price: arr[i][keyPr] ? makeString(arr[i][keyPr]) : '0'
+      });
+    }
+
+    if (platform === 'openai') {
+      const keyCurrency = data.currency || 'currency';
+      const contentType = data.contentTypeOpenAI;
+      const amount = arr[i][keyPr];
+      const currency = arr[i][keyCurrency] || copyFromDataLayer(keyCurrency);
+      contents.push({
+        id: arr[i][keyId],
+        name: arr[i][keyNm],
+        quantity: qt,
+        amount: convertCurrencyValueToMinorUnit(amount, currency),
+        content_type: contentType,
+        currency: currency
       });
     }
   }
@@ -308,4 +332,28 @@ function toFixed2(num) {
 
 function endsWith(str, suffix) {
   return str.indexOf(suffix, str.length - suffix.length) !== -1;
+}
+
+function convertCurrencyValueToMinorUnit(value, currency) {
+  if (!value) return value;
+
+  // prettier-ignore
+  const zeroDecimalCurrencies = [
+    'BIF', 'CLP', 'DJF', 'GNF', 'IDR', 'ISK',
+    'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF',
+    'UGX', 'VND', 'VUV', 'XAF', 'XOF', 'XPF'
+  ];
+  const threeDecimalCurrencies = ['BHD', 'IQD', 'JOD', 'KWD', 'LYD', 'OMR', 'TND'];
+  const upperCurrency = currency ? makeString(currency).toUpperCase() : '';
+
+  let multiplier = 100; // default: 2 decimal places (BRL, USD, EUR, GBP, etc.)
+  if (zeroDecimalCurrencies.indexOf(upperCurrency) !== -1) multiplier = 1;
+  else if (threeDecimalCurrencies.indexOf(upperCurrency) !== -1) multiplier = 1000;
+
+  return makeInteger(roundValue(value * multiplier));
+}
+
+function roundValue(value) {
+  if (!value) return value;
+  return math.round(makeNumber(value) * 100) / 100;
 }
