@@ -19,7 +19,7 @@ ___INFO___
     "CONVERSIONS",
     "REMARKETING"
   ],
-  "description": "Generates the desired parameter from an array.\nBy stape.io.",
+  "description": "Maps and converts an input array of products to the supported platforms expected schema. By stape.io.",
   "containerContexts": [
     "WEB"
   ]
@@ -82,364 +82,440 @@ ___TEMPLATE_PARAMETERS___
       {
         "value": "reddit",
         "displayValue": "Reddit"
+      },
+      {
+        "value": "openai",
+        "displayValue": "OpenAI"
       }
     ],
     "simpleValueType": true,
     "help": "Choose which platform to generate parameter"
   },
   {
-    "type": "RADIO",
-    "name": "meta_task",
-    "displayName": "What to return",
-    "radioItems": [
+    "type": "GROUP",
+    "name": "returnParametersGroup",
+    "displayName": "",
+    "groupStyle": "NO_ZIPPY",
+    "subParams": [
       {
-        "value": "contents",
-        "displayValue": "contents [ {} ]"
-      },
-      {
-        "value": "ids",
-        "displayValue": "content_ids [ ]"
-      },
-      {
-        "value": "name",
-        "displayValue": "content_name \u0027 \u0027",
-        "help": "will only return value if there is one object in product array, since content_name parameter is applicable only to single product (type) events"
-      },
-      {
-        "value": "value",
-        "displayValue": "value",
-        "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
-      },
-      {
-        "value": "numitems",
-        "displayValue": "num_items",
-        "subParams": []
-      }
-    ],
-    "simpleValueType": true,
-    "enablingConditions": [
-      {
-        "paramName": "platform",
-        "paramValue": "meta",
-        "type": "EQUALS"
-      }
-    ]
-  },
-  {
-    "type": "RADIO",
-    "name": "ga4_task",
-    "displayName": "What to return",
-    "radioItems": [
-      {
-        "value": "value",
-        "displayValue": "value",
-        "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
-      },
-      {
-        "value": "items",
-        "displayValue": "items",
-        "help": ""
-      },
-      {
-        "value": "ids",
-        "displayValue": "ecomm_prodid",
-        "help": "for Ads Remarketing"
-      }
-    ],
-    "simpleValueType": true,
-    "enablingConditions": [
-      {
-        "paramName": "platform",
-        "paramValue": "ga4",
-        "type": "EQUALS"
-      }
-    ]
-  },
-  {
-    "type": "RADIO",
-    "name": "rakuten_task",
-    "displayName": "What to return",
-    "radioItems": [
-      {
-        "value": "items",
-        "displayValue": "line_items",
-        "help": "",
-        "subParams": []
-      }
-    ],
-    "simpleValueType": true,
-    "enablingConditions": [
-      {
-        "paramName": "platform",
-        "paramValue": "rakuten",
-        "type": "EQUALS"
-      }
-    ]
-  },
-  {
-    "type": "RADIO",
-    "name": "gAdsOff_task",
-    "displayName": "What to return",
-    "radioItems": [
-      {
-        "value": "value",
-        "displayValue": "value",
-        "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
-      },
-      {
-        "value": "items",
-        "displayValue": "items"
-      }
-    ],
-    "simpleValueType": true,
-    "enablingConditions": [
-      {
-        "paramName": "platform",
-        "paramValue": "gAdsOff",
-        "type": "EQUALS"
-      }
-    ]
-  },
-  {
-    "type": "RADIO",
-    "name": "klaviyo_task",
-    "displayName": "What to return",
-    "radioItems": [
-      {
-        "value": "value",
-        "displayValue": "value",
-        "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
-      },
-      {
-        "value": "item",
-        "displayValue": "item",
-        "help": "for ViewedProduct event"
-      },
-      {
-        "value": "items",
-        "displayValue": "items"
-      }
-    ],
-    "simpleValueType": true,
-    "enablingConditions": [
-      {
-        "paramName": "platform",
-        "paramValue": "klaviyo",
-        "type": "EQUALS"
-      }
-    ]
-  },
-  {
-    "type": "RADIO",
-    "name": "microsoft_task",
-    "displayName": "What to return",
-    "radioItems": [
-      {
-        "value": "value",
-        "displayValue": "revenue_value",
-        "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
-      }
-    ],
-    "simpleValueType": true,
-    "enablingConditions": [
-      {
-        "paramName": "platform",
-        "paramValue": "microsoft",
-        "type": "EQUALS"
-      }
-    ]
-  },
-  {
-    "type": "RADIO",
-    "name": "tiktok_task",
-    "displayName": "What to return",
-    "radioItems": [
-      {
-        "value": "contents",
-        "displayValue": "contents [ {} ]",
-        "subParams": [
+        "type": "RADIO",
+        "name": "meta_task",
+        "displayName": "What to return",
+        "radioItems": [
           {
-            "type": "SELECT",
-            "name": "contentType",
-            "displayName": "content_type parameter",
-            "macrosInSelect": false,
-            "selectItems": [
-              {
-                "value": "product",
-                "displayValue": "product"
-              },
-              {
-                "value": "product_group",
-                "displayValue": "product_group"
-              }
-            ],
-            "simpleValueType": true,
-            "help": "choose either product or product_group as is required by TikTok events API",
-            "defaultValue": "product",
-            "enablingConditions": []
+            "value": "contents",
+            "displayValue": "contents [ {} ]"
+          },
+          {
+            "value": "ids",
+            "displayValue": "content_ids [ ]"
+          },
+          {
+            "value": "name",
+            "displayValue": "content_name \u0027 \u0027",
+            "help": "will only return value if there is one object in product array, since content_name parameter is applicable only to single product (type) events"
+          },
+          {
+            "value": "value",
+            "displayValue": "value",
+            "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
+          },
+          {
+            "value": "numitems",
+            "displayValue": "num_items",
+            "subParams": []
+          }
+        ],
+        "simpleValueType": true,
+        "enablingConditions": [
+          {
+            "paramName": "platform",
+            "paramValue": "meta",
+            "type": "EQUALS"
           }
         ]
       },
       {
-        "value": "name",
-        "displayValue": "content_name \u0027 \u0027",
-        "help": "will only return value if there is one object in product array, since content_name parameter is applicable only to single product (type) events"
+        "type": "RADIO",
+        "name": "ga4_task",
+        "displayName": "What to return",
+        "radioItems": [
+          {
+            "value": "value",
+            "displayValue": "value",
+            "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
+          },
+          {
+            "value": "items",
+            "displayValue": "items [ { } ]",
+            "help": ""
+          },
+          {
+            "value": "ids",
+            "displayValue": "ecomm_prodid",
+            "help": "for Ads Remarketing"
+          }
+        ],
+        "simpleValueType": true,
+        "enablingConditions": [
+          {
+            "paramName": "platform",
+            "paramValue": "ga4",
+            "type": "EQUALS"
+          }
+        ]
       },
       {
-        "value": "value",
-        "displayValue": "value",
-        "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
+        "type": "RADIO",
+        "name": "rakuten_task",
+        "displayName": "What to return",
+        "radioItems": [
+          {
+            "value": "items",
+            "displayValue": "line_items",
+            "help": "",
+            "subParams": []
+          }
+        ],
+        "simpleValueType": true,
+        "enablingConditions": [
+          {
+            "paramName": "platform",
+            "paramValue": "rakuten",
+            "type": "EQUALS"
+          }
+        ]
       },
       {
-        "value": "numitems",
-        "displayValue": "num_items",
-        "subParams": []
-      }
-    ],
-    "simpleValueType": true,
-    "enablingConditions": [
+        "type": "RADIO",
+        "name": "gAdsOff_task",
+        "displayName": "What to return",
+        "radioItems": [
+          {
+            "value": "value",
+            "displayValue": "value",
+            "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
+          },
+          {
+            "value": "items",
+            "displayValue": "items [ { } ]"
+          }
+        ],
+        "simpleValueType": true,
+        "enablingConditions": [
+          {
+            "paramName": "platform",
+            "paramValue": "gAdsOff",
+            "type": "EQUALS"
+          }
+        ]
+      },
       {
-        "paramName": "platform",
-        "paramValue": "tiktok",
-        "type": "EQUALS"
+        "type": "RADIO",
+        "name": "klaviyo_task",
+        "displayName": "What to return",
+        "radioItems": [
+          {
+            "value": "value",
+            "displayValue": "value",
+            "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
+          },
+          {
+            "value": "item",
+            "displayValue": "item",
+            "help": "for ViewedProduct event"
+          },
+          {
+            "value": "items",
+            "displayValue": "items [ { } ]"
+          }
+        ],
+        "simpleValueType": true,
+        "enablingConditions": [
+          {
+            "paramName": "platform",
+            "paramValue": "klaviyo",
+            "type": "EQUALS"
+          }
+        ]
+      },
+      {
+        "type": "RADIO",
+        "name": "microsoft_task",
+        "displayName": "What to return",
+        "radioItems": [
+          {
+            "value": "value",
+            "displayValue": "revenue_value",
+            "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
+          }
+        ],
+        "simpleValueType": true,
+        "enablingConditions": [
+          {
+            "paramName": "platform",
+            "paramValue": "microsoft",
+            "type": "EQUALS"
+          }
+        ]
+      },
+      {
+        "type": "RADIO",
+        "name": "tiktok_task",
+        "displayName": "What to return",
+        "radioItems": [
+          {
+            "value": "contents",
+            "displayValue": "contents [ {} ]",
+            "subParams": [
+              {
+                "type": "SELECT",
+                "name": "contentType",
+                "displayName": "content_type parameter",
+                "macrosInSelect": false,
+                "selectItems": [
+                  {
+                    "value": "product",
+                    "displayValue": "product"
+                  },
+                  {
+                    "value": "product_group",
+                    "displayValue": "product_group"
+                  }
+                ],
+                "simpleValueType": true,
+                "help": "choose either product or product_group as is required by TikTok events API",
+                "defaultValue": "product",
+                "enablingConditions": []
+              }
+            ]
+          },
+          {
+            "value": "name",
+            "displayValue": "content_name \u0027 \u0027",
+            "help": "will only return value if there is one object in product array, since content_name parameter is applicable only to single product (type) events"
+          },
+          {
+            "value": "value",
+            "displayValue": "value",
+            "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
+          },
+          {
+            "value": "numitems",
+            "displayValue": "num_items",
+            "subParams": []
+          }
+        ],
+        "simpleValueType": true,
+        "enablingConditions": [
+          {
+            "paramName": "platform",
+            "paramValue": "tiktok",
+            "type": "EQUALS"
+          }
+        ]
+      },
+      {
+        "type": "RADIO",
+        "name": "twitter_task",
+        "displayName": "What to return",
+        "radioItems": [
+          {
+            "value": "contents",
+            "displayValue": "contents [ { } ]"
+          },
+          {
+            "value": "value",
+            "displayValue": "value",
+            "subParams": [],
+            "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
+          }
+        ],
+        "simpleValueType": true,
+        "enablingConditions": [
+          {
+            "paramName": "platform",
+            "paramValue": "twitter",
+            "type": "EQUALS"
+          }
+        ]
+      },
+      {
+        "type": "RADIO",
+        "name": "criteo_task",
+        "displayName": "What to return",
+        "radioItems": [
+          {
+            "value": "items",
+            "displayValue": "items [ { } ]"
+          }
+        ],
+        "simpleValueType": true,
+        "enablingConditions": [
+          {
+            "paramName": "platform",
+            "paramValue": "criteo",
+            "type": "EQUALS"
+          }
+        ]
+      },
+      {
+        "type": "RADIO",
+        "name": "pinterest_task",
+        "displayName": "What to return",
+        "radioItems": [
+          {
+            "value": "items",
+            "displayValue": "line_items [ { } ]"
+          },
+          {
+            "value": "value",
+            "displayValue": "value",
+            "subParams": [],
+            "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
+          },
+          {
+            "value": "ids",
+            "displayValue": "content_ids [ ]"
+          },
+          {
+            "value": "contents",
+            "displayValue": "contents [ { } ]"
+          }
+        ],
+        "simpleValueType": true,
+        "enablingConditions": [
+          {
+            "paramName": "platform",
+            "paramValue": "pinterest",
+            "type": "EQUALS"
+          }
+        ]
+      },
+      {
+        "type": "RADIO",
+        "name": "snap_task",
+        "displayName": "What to return",
+        "radioItems": [
+          {
+            "value": "value",
+            "displayValue": "price",
+            "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
+          },
+          {
+            "value": "ids",
+            "displayValue": "item_ids [ ]"
+          },
+          {
+            "value": "numitems",
+            "displayValue": "number_items",
+            "subParams": []
+          }
+        ],
+        "simpleValueType": true,
+        "enablingConditions": [
+          {
+            "paramName": "platform",
+            "paramValue": "snap",
+            "type": "EQUALS"
+          }
+        ]
+      },
+      {
+        "type": "RADIO",
+        "name": "reddit_task",
+        "displayName": "What to return",
+        "radioItems": [
+          {
+            "value": "value",
+            "displayValue": "value",
+            "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
+          },
+          {
+            "value": "numitems",
+            "displayValue": "itemCount",
+            "subParams": []
+          },
+          {
+            "value": "items",
+            "displayValue": "products [ { } ]"
+          }
+        ],
+        "simpleValueType": true,
+        "enablingConditions": [
+          {
+            "paramName": "platform",
+            "paramValue": "reddit",
+            "type": "EQUALS"
+          }
+        ],
+        "help": "As described in the \u003ca href\u003d\"https://business.reddithelp.com/s/article/manual-conversion-events-with-the-reddit-pixel\"\u003eofficial documentation\u003c/a\u003e."
+      },
+      {
+        "type": "RADIO",
+        "name": "openai_task",
+        "displayName": "What to return",
+        "radioItems": [
+          {
+            "value": "contents",
+            "displayValue": "contents [ { } ]",
+            "help": "Returns a list of product objects as described in \u003ca href\u003d\"https://developers.openai.com/ads/supported-events#contents\"\u003e official documentation\u003c/a\u003e as of June 2026.",
+            "subParams": [
+              {
+                "type": "SELECT",
+                "name": "contentTypeOpenAI",
+                "displayName": "content_type parameter",
+                "macrosInSelect": false,
+                "selectItems": [
+                  {
+                    "value": "product",
+                    "displayValue": "product"
+                  },
+                  {
+                    "value": "plan",
+                    "displayValue": "plan"
+                  },
+                  {
+                    "value": "page",
+                    "displayValue": "page"
+                  }
+                ],
+                "simpleValueType": true,
+                "help": "Choose either \u003cb\u003eproduct\u003c/b\u003e, \u003cb\u003eplan\u003c/b\u003e or \u003cb\u003epage\u003c/b\u003e  as required.",
+                "defaultValue": "product",
+                "enablingConditions": [
+                  {
+                    "paramName": "platform",
+                    "paramValue": "openai",
+                    "type": "EQUALS"
+                  }
+                ],
+                "valueValidators": [
+                  {
+                    "type": "NON_EMPTY"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "value": "value",
+            "displayValue": "amount",
+            "subParams": [],
+            "help": "Returns the total value amount as described in \u003ca href\u003d\"https://developers.openai.com/ads/supported-events#contents\"\u003e official documentation\u003c/a\u003e as of June 2026."
+          }
+        ],
+        "simpleValueType": true,
+        "enablingConditions": [
+          {
+            "paramName": "platform",
+            "paramValue": "openai",
+            "type": "EQUALS"
+          }
+        ],
+        "help": "As described in the \u003ca href\u003d\"https://developers.openai.com/ads/supported-events\"\u003eofficial documentation\u003c/a\u003e."
       }
     ]
-  },
-  {
-    "type": "RADIO",
-    "name": "twitter_task",
-    "displayName": "What to return",
-    "radioItems": [
-      {
-        "value": "contents",
-        "displayValue": "contents [{ }]"
-      },
-      {
-        "value": "value",
-        "displayValue": "value",
-        "subParams": [],
-        "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
-      }
-    ],
-    "simpleValueType": true,
-    "enablingConditions": [
-      {
-        "paramName": "platform",
-        "paramValue": "twitter",
-        "type": "EQUALS"
-      }
-    ]
-  },
-  {
-    "type": "RADIO",
-    "name": "criteo_task",
-    "displayName": "What to return",
-    "radioItems": [
-      {
-        "value": "items",
-        "displayValue": "items [{ }]"
-      }
-    ],
-    "simpleValueType": true,
-    "enablingConditions": [
-      {
-        "paramName": "platform",
-        "paramValue": "criteo",
-        "type": "EQUALS"
-      }
-    ]
-  },
-  {
-    "type": "RADIO",
-    "name": "pinterest_task",
-    "displayName": "What to return",
-    "radioItems": [
-      {
-        "value": "items",
-        "displayValue": "line_items [{ }]"
-      },
-      {
-        "value": "value",
-        "displayValue": "value",
-        "subParams": [],
-        "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
-      },
-      {
-        "value": "ids",
-        "displayValue": "content_ids [ ]"
-      },
-      {
-        "value": "contents",
-        "displayValue": "contents [{ }]"
-      }
-    ],
-    "simpleValueType": true,
-    "enablingConditions": [
-      {
-        "paramName": "platform",
-        "paramValue": "pinterest",
-        "type": "EQUALS"
-      }
-    ]
-  },
-  {
-    "type": "RADIO",
-    "name": "snap_task",
-    "displayName": "What to return",
-    "radioItems": [
-      {
-        "value": "value",
-        "displayValue": "price",
-        "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
-      },
-      {
-        "value": "ids",
-        "displayValue": "item_ids"
-      },
-      {
-        "value": "numitems",
-        "displayValue": "number_items",
-        "subParams": []
-      }
-    ],
-    "simpleValueType": true,
-    "enablingConditions": [
-      {
-        "paramName": "platform",
-        "paramValue": "snap",
-        "type": "EQUALS"
-      }
-    ]
-  },
-  {
-    "type": "RADIO",
-    "name": "reddit_task",
-    "displayName": "What to return",
-    "radioItems": [
-      {
-        "value": "value",
-        "displayValue": "value",
-        "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
-      },
-      {
-        "value": "numitems",
-        "displayValue": "itemCount",
-        "subParams": []
-      },
-      {
-        "value": "items",
-        "displayValue": "products"
-      }
-    ],
-    "simpleValueType": true,
-    "enablingConditions": [
-      {
-        "paramName": "platform",
-        "paramValue": "reddit",
-        "type": "EQUALS"
-      }
-    ],
-    "help": "As described in the \u003ca href\u003d\"https://business.reddithelp.com/s/article/manual-conversion-events-with-the-reddit-pixel\"\u003eofficial documentation\u003c/a\u003e."
   },
   {
     "type": "GROUP",
@@ -452,7 +528,7 @@ ___TEMPLATE_PARAMETERS___
         "name": "orderItems",
         "displayName": "Array of Objects",
         "simpleValueType": true,
-        "help": "[{}] any structured array of item objects",
+        "help": "[ {} ] any structured array of item objects",
         "valueValidators": [
           {
             "type": "NON_EMPTY"
@@ -470,51 +546,131 @@ ___TEMPLATE_PARAMETERS___
       {
         "type": "TEXT",
         "name": "keyId",
-        "displayName": "Product ID/SKU",
+        "displayName": "Product ID/SKU Key",
         "simpleValueType": true,
         "valueValidators": [
           {
             "type": "NON_EMPTY"
+          }
+        ],
+        "valueHint": "item_id"
+      },
+      {
+        "type": "CHECKBOX",
+        "name": "useAdditionalKeyId",
+        "checkboxText": "Use additional Product ID/SKU Key Source",
+        "simpleValueType": true,
+        "subParams": [
+          {
+            "type": "TEXT",
+            "name": "keyIdAdditional",
+            "displayName": "Additional Product ID/SKU Key",
+            "simpleValueType": true,
+            "valueValidators": [
+              {
+                "type": "NON_EMPTY"
+              }
+            ],
+            "enablingConditions": [
+              {
+                "paramName": "useAdditionalKeyId",
+                "paramValue": true,
+                "type": "EQUALS"
+              }
+            ],
+            "valueHint": "productId"
+          }
+        ],
+        "help": "When enabled, the variable first checks this value as the source for the Product ID/SKU Key. If not found, it falls back to the main Product ID/SKU Key specified above."
+      },
+      {
+        "type": "CHECKBOX",
+        "name": "formatIdInShopifyFormat",
+        "checkboxText": "Format Product ID in Shopify Product Feed format",
+        "simpleValueType": true,
+        "help": "When enabled, the Product ID will be formatted as:\n\u003cbr/\u003e\n\u003ci\u003eshopify_{Market Code}_{Product ID/SKU}_{Product Variant}\u003c/i\u003e\n\u003cbr/\u003e\u003cbr/\u003e\nIt only formats the value if both Product ID/SKU and Product Variant are found. Otherwise, it defaults to Product ID/SKU.",
+        "subParams": [
+          {
+            "type": "TEXT",
+            "name": "shopifyKeyVariant",
+            "displayName": "Product Variant ID Key",
+            "simpleValueType": true,
+            "valueValidators": [
+              {
+                "type": "NON_EMPTY"
+              }
+            ],
+            "enablingConditions": [
+              {
+                "paramName": "formatIdInShopifyFormat",
+                "paramValue": true,
+                "type": "EQUALS"
+              }
+            ],
+            "valueHint": "variant_id"
+          },
+          {
+            "type": "TEXT",
+            "name": "shopifyMarketCode",
+            "displayName": "Shopify Market Code",
+            "simpleValueType": true,
+            "valueHint": "US",
+            "help": "ISO Market Code (for Custom Shopify) e.g., BR, GB, US. Or ZZ if using the new Merchant API.",
+            "enablingConditions": [
+              {
+                "paramName": "formatIdInShopifyFormat",
+                "paramValue": true,
+                "type": "EQUALS"
+              }
+            ],
+            "valueValidators": [
+              {
+                "type": "NON_EMPTY"
+              }
+            ]
           }
         ]
       },
       {
         "type": "TEXT",
         "name": "keyNm",
-        "displayName": "Product Name",
+        "displayName": "Product Name Key",
         "simpleValueType": true,
         "valueValidators": [
           {
             "type": "NON_EMPTY"
           }
-        ]
+        ],
+        "valueHint": "item_name"
       },
       {
         "type": "TEXT",
         "name": "keyPr",
-        "displayName": "Product Price",
+        "displayName": "Product Price Key",
         "simpleValueType": true,
         "valueValidators": [
           {
             "type": "NON_EMPTY"
           }
-        ]
+        ],
+        "valueHint": "price"
       },
       {
         "type": "TEXT",
         "name": "keyQt",
-        "displayName": "Product Quantity",
+        "displayName": "Product Quantity Key",
         "simpleValueType": true,
         "valueValidators": [
           {
             "type": "NON_EMPTY"
           }
-        ]
+        ],
+        "valueHint": "quantity"
       },
       {
         "type": "TEXT",
         "name": "keyCat",
-        "displayName": "Product Category",
+        "displayName": "Product Category Key",
         "simpleValueType": true,
         "enablingConditions": [
           {
@@ -537,12 +693,13 @@ ___TEMPLATE_PARAMETERS___
             "paramValue": "reddit",
             "type": "EQUALS"
           }
-        ]
+        ],
+        "valueHint": "category"
       },
       {
         "type": "TEXT",
         "name": "keyImg",
-        "displayName": "Product Image URL",
+        "displayName": "Product Image URL Key",
         "simpleValueType": true,
         "enablingConditions": [
           {
@@ -550,14 +707,35 @@ ___TEMPLATE_PARAMETERS___
             "paramValue": "klaviyo",
             "type": "EQUALS"
           }
-        ]
+        ],
+        "valueHint": "image_url"
+      },
+      {
+        "type": "TEXT",
+        "name": "keyCurrency",
+        "displayName": "Currency",
+        "simpleValueType": true,
+        "enablingConditions": [
+          {
+            "paramName": "platform",
+            "paramValue": "openai",
+            "type": "EQUALS"
+          }
+        ],
+        "help": "The key for the product price currency within the product object or within the dataLayer event.",
+        "valueValidators": [
+          {
+            "type": "NON_EMPTY"
+          }
+        ],
+        "valueHint": "currency"
       },
       {
         "type": "CHECKBOX",
         "name": "buildCatTree",
         "checkboxText": "Build Category Tree?",
         "simpleValueType": true,
-        "help": "If your items have multiple categories, create a tree in \u0027cat1 \u003e cat2 \u003e cat3\u0027 string format",
+        "help": "If your items have multiple categories, create a tree in \u0027cat1 \u003e cat2 \u003e cat3\u0027 string format.",
         "enablingConditions": [
           {
             "paramName": "platform",
@@ -571,7 +749,7 @@ ___TEMPLATE_PARAMETERS___
         "name": "keyCatList",
         "displayName": "Category parameter keys",
         "simpleValueType": true,
-        "help": "coma separated in order of appearance in tree, like: \u0027cat_key,mykey,custom_var_7\u0027",
+        "help": "Comma-separated in order of appearance in tree, such as: \u0027cat_key,mykey,custom_var_7\u0027",
         "enablingConditions": [
           {
             "paramName": "buildCatTree",
@@ -623,14 +801,14 @@ ___TEMPLATE_PARAMETERS___
             "type": "EQUALS"
           }
         ],
-        "help": "discount parameter KEY for input array"
+        "help": "Discount parameter key for input array."
       },
       {
         "type": "TEXT",
         "name": "discOrderLevel",
         "displayName": "Order-level discount amount",
         "simpleValueType": true,
-        "help": "order-level discount VALUE",
+        "help": "Order-level discount value.",
         "enablingConditions": [
           {
             "paramName": "discConfig",
@@ -693,7 +871,7 @@ ___TEMPLATE_PARAMETERS___
         "name": "taxDeductPercent",
         "displayName": "Tax %",
         "simpleValueType": true,
-        "help": "just number, no % symbol",
+        "help": "Just number, no % symbol.",
         "valueValidators": [],
         "enablingConditions": [
           {
@@ -726,7 +904,6 @@ ___TEMPLATE_PARAMETERS___
       {
         "type": "SIMPLE_TABLE",
         "name": "customParams",
-        "displayName": "",
         "simpleTableColumns": [
           {
             "defaultValue": "",
@@ -768,12 +945,13 @@ ___TEMPLATE_PARAMETERS___
 
 ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 
+const copyFromDataLayer = require('copyFromDataLayer');
 const makeInteger = require('makeInteger');
 const makeNumber = require('makeNumber');
 const makeString = require('makeString');
 const makeTableMap = require('makeTableMap');
 const getType = require('getType');
-const math = require('Math');
+const Math = require('Math');
 const Object = require('Object');
 
 /*==============================================================================
@@ -785,7 +963,6 @@ const keyNm = data.keyNm;
 const keyQt = data.keyQt;
 const keyCat = data.keyCat;
 const keyImg = data.keyImg;
-const contentType = data.contentType;
 const taxDeductPercent = toFixed2(makeNumber(data.taxDeductPercent));
 const keyDisc = data.keyDiscItemLevel;
 const customParamMap = data.customParams
@@ -831,6 +1008,21 @@ function runTask() {
   }
 }
 
+function getId(item) {
+  let id = item[keyId];
+
+  if (data.useAdditionalKeyId && data.keyIdAdditional && item[data.keyIdAdditional]) {
+    id = item[data.keyIdAdditional];
+  }
+
+  if (data.formatIdInShopifyFormat && data.shopifyKeyVariant && item[data.shopifyKeyVariant]) {
+    const marketCode = data.shopifyMarketCode || 'ZZ';
+    if (id) id = 'shopify_' + marketCode + '_' + id + '_' + item[data.shopifyKeyVariant];
+  }
+
+  return id;
+}
+
 function getNumItems(arr) {
   const num_items = arr.reduce((acc, curr) => {
     const quantity = curr[keyQt] ? makeInteger(curr[keyQt]) : 1;
@@ -845,7 +1037,7 @@ function getContentName(arr) {
 }
 
 function getContentIds(arr) {
-  const content_ids = arr.map((item) => item[keyId]);
+  const content_ids = arr.map((item) => getId(item));
   return content_ids;
 }
 
@@ -854,7 +1046,7 @@ function getItem(arr) {
   cat.push(arr[0][keyCat]);
 
   let item = {
-    ProductID: arr[0][keyId],
+    ProductID: getId(arr[0]),
     ProductName: arr[0][keyNm],
     Price: arr[0][keyPr],
     ImageURL: arr[0][keyImg],
@@ -870,6 +1062,14 @@ function getValue(arr) {
     const itemQuantity = curr[keyQt];
     return acc + (itemQuantity ? makeInteger(itemQuantity) * itemPrice : itemPrice);
   }, 0);
+
+  const platform = data.platform;
+  if (platform === 'openai') {
+    const keyCurrency = data.keyCurrency || 'currency';
+    const currency = arr[0][keyCurrency] || copyFromDataLayer(keyCurrency);
+    return convertCurrencyValueToMinorUnit(value, currency);
+  }
+
   return toFixed2(value);
 }
 
@@ -882,15 +1082,17 @@ function getContents(arr, platform) {
 
     if (platform === 'meta') {
       contents.push({
-        id: arr[i][keyId],
+        id: getId(arr[i]),
         quantity: qt,
         item_price: arr[i][keyPr]
       });
     }
 
     if (platform === 'tiktok') {
+      const contentType = data.contentType;
+      const id = getId(arr[i]);
       contents.push({
-        content_id: arr[i][keyId] ? makeString(arr[i][keyId]) : undefined,
+        content_id: id ? makeString(id) : undefined,
         content_type: contentType,
         content_category: arr[i][keyCat],
         content_name: arr[i][keyNm],
@@ -901,7 +1103,7 @@ function getContents(arr, platform) {
 
     if (platform === 'twitter') {
       contents.push({
-        content_id: arr[i][keyId],
+        content_id: getId(arr[i]),
         content_name: arr[i][keyNm],
         content_type: arr[i][keyCat],
         num_items: qt,
@@ -913,6 +1115,22 @@ function getContents(arr, platform) {
       contents.push({
         quantity: qt,
         item_price: arr[i][keyPr] ? makeString(arr[i][keyPr]) : '0'
+      });
+    }
+
+    if (platform === 'openai') {
+      const keyCurrency = data.keyCurrency || 'currency';
+      const contentType = data.contentTypeOpenAI;
+      const id = getId(arr[i]);
+      const amount = arr[i][keyPr] ? makeNumber(arr[i][keyPr]) : 0;
+      const currency = arr[i][keyCurrency] || copyFromDataLayer(keyCurrency);
+      contents.push({
+        id: id ? makeString(id) : undefined,
+        name: arr[i][keyNm] ? makeString(arr[i][keyNm]) : undefined,
+        quantity: qt,
+        amount: convertCurrencyValueToMinorUnit(amount, currency),
+        content_type: contentType,
+        currency: currency
       });
     }
   }
@@ -937,7 +1155,7 @@ function getItems(arr, platform) {
 
     if (platform === 'ga4') {
       let itemObj = {
-        item_id: arr[i][keyId],
+        item_id: getId(arr[i]),
         item_name: arr[i][keyNm],
         quantity: qt,
         price: arr[i][keyPr],
@@ -959,7 +1177,7 @@ function getItems(arr, platform) {
       cat.push(arr[i][keyCat]);
 
       let itemObj = {
-        ProductID: arr[i][keyId],
+        ProductID: getId(arr[i]),
         ProductName: arr[i][keyNm],
         Quantity: qt,
         ItemPrice: arr[i][keyPr],
@@ -978,7 +1196,7 @@ function getItems(arr, platform) {
 
     if (platform === 'criteo') {
       let itemObj = {
-        id: arr[i][keyId],
+        id: getId(arr[i]),
         quantity: qt,
         price: arr[i][keyPr]
       };
@@ -987,8 +1205,9 @@ function getItems(arr, platform) {
     }
 
     if (platform === 'gAdsOff') {
+      const id = getId(arr[i]);
       items.push({
-        productId: arr[i][keyId] ? makeString(arr[i][keyId]) : undefined,
+        productId: id ? makeString(id) : undefined,
         quantity: qt,
         unitPrice: makeNumber(arr[i][keyPr])
       });
@@ -996,7 +1215,7 @@ function getItems(arr, platform) {
 
     if (platform === 'pinterest') {
       items.push({
-        product_id: arr[i][keyId],
+        product_id: getId(arr[i]),
         product_name: arr[i][keyNm],
         product_quantity: qt,
         product_price: arr[i][keyPr] ? makeNumber(arr[i][keyPr]) : 0
@@ -1004,8 +1223,9 @@ function getItems(arr, platform) {
     }
 
     if (platform === 'reddit') {
+      const id = getId(arr[i]);
       items.push({
-        id: arr[i][keyId] ? makeString(arr[i][keyId]) : undefined,
+        id: id ? makeString(id) : undefined,
         category: arr[i][keyCat],
         name: arr[i][keyNm]
       });
@@ -1018,8 +1238,8 @@ function getItems(arr, platform) {
 
       if (data.taxPriceConfig === 'priceDeduct' && taxDeductPercent && taxDeductPercent > 0) {
         let tmp = p / (taxDeductPercent / 100 + 1);
-        price = (math.round(tmp * 100) / 100) * 100 * qt;
-        price = math.round(price * 100) / 100;
+        price = toFixed2(tmp) * 100 * qt;
+        price = toFixed2(price);
       }
 
       if (data.discConfig === 'item_level' && arr[i][keyDisc]) {
@@ -1033,7 +1253,7 @@ function getItems(arr, platform) {
       }
 
       let itemObj = {
-        sku: arr[i][keyId],
+        sku: getId(arr[i]),
         product_name: arr[i][keyNm],
         quantity: qt,
         amount: price > 0 ? price : toFixed2(p * 100 * qt),
@@ -1072,13 +1292,60 @@ function getItems(arr, platform) {
   Helpers
 ==============================================================================*/
 
-function toFixed2(num) {
-  return math.round(num * 100) / 100;
+function toFixed2(value) {
+  if (!value) return value;
+  return Math.round(makeNumber(value) * 100) / 100;
 }
 
 function endsWith(str, suffix) {
   return str.indexOf(suffix, str.length - suffix.length) !== -1;
 }
+
+function convertCurrencyValueToMinorUnit(value, currency) {
+  if (!value) return value;
+
+  // prettier-ignore
+  const zeroDecimalCurrencies = [
+    'BIF', 'CLP', 'DJF', 'GNF', 'IDR', 'ISK',
+    'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF',
+    'UGX', 'VND', 'VUV', 'XAF', 'XOF', 'XPF'
+  ];
+  const threeDecimalCurrencies = ['BHD', 'IQD', 'JOD', 'KWD', 'LYD', 'OMR', 'TND'];
+  const upperCurrency = currency ? makeString(currency).toUpperCase() : '';
+
+  let multiplier = 100; // default: 2 decimal places (BRL, USD, EUR, GBP, etc.)
+  if (zeroDecimalCurrencies.indexOf(upperCurrency) !== -1) multiplier = 1;
+  else if (threeDecimalCurrencies.indexOf(upperCurrency) !== -1) multiplier = 1000;
+
+  return makeInteger(toFixed2(value * multiplier));
+}
+
+
+___WEB_PERMISSIONS___
+
+[
+  {
+    "instance": {
+      "key": {
+        "publicId": "read_data_layer",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "allowedKeys",
+          "value": {
+            "type": 1,
+            "string": "any"
+          }
+        }
+      ]
+    },
+    "clientAnnotations": {
+      "isEditedByUser": true
+    },
+    "isRequired": true
+  }
+]
 
 
 ___TESTS___
@@ -1088,6 +1355,10 @@ scenarios: []
 
 ___NOTES___
 
-Created on 12/10/2021, 11:11:20
+2026-15-06 - Change Notes:
+ - Add OpenAI Ads parameters.
+ - Add additional source for Product ID/SKU.
+ - Add Shopify Product ID Feed format support.
 
+Created on 12/10/2021, 11:11:20
 
