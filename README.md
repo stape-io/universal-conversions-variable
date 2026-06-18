@@ -19,6 +19,7 @@ It currenly supports the following platforms:
 - Rakuten
 - Criteo
 - Reddit
+- OpenAI
 
 ## Open Source
 

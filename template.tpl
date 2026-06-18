@@ -19,7 +19,7 @@ ___INFO___
     "CONVERSIONS",
     "REMARKETING"
   ],
-  "description": "Generates the desired parameter from an array.\nBy stape.io.",
+  "description": "Maps and converts an input array of products to the supported platforms expected schema. By stape.io.",
   "containerContexts": [
     "WEB"
   ]
@@ -147,7 +147,7 @@ ___TEMPLATE_PARAMETERS___
           },
           {
             "value": "items",
-            "displayValue": "items",
+            "displayValue": "items [ { } ]",
             "help": ""
           },
           {
@@ -198,7 +198,7 @@ ___TEMPLATE_PARAMETERS___
           },
           {
             "value": "items",
-            "displayValue": "items"
+            "displayValue": "items [ { } ]"
           }
         ],
         "simpleValueType": true,
@@ -227,7 +227,7 @@ ___TEMPLATE_PARAMETERS___
           },
           {
             "value": "items",
-            "displayValue": "items"
+            "displayValue": "items [ { } ]"
           }
         ],
         "simpleValueType": true,
@@ -322,7 +322,7 @@ ___TEMPLATE_PARAMETERS___
         "radioItems": [
           {
             "value": "contents",
-            "displayValue": "contents [{ }]"
+            "displayValue": "contents [ { } ]"
           },
           {
             "value": "value",
@@ -347,7 +347,7 @@ ___TEMPLATE_PARAMETERS___
         "radioItems": [
           {
             "value": "items",
-            "displayValue": "items [{ }]"
+            "displayValue": "items [ { } ]"
           }
         ],
         "simpleValueType": true,
@@ -366,7 +366,7 @@ ___TEMPLATE_PARAMETERS___
         "radioItems": [
           {
             "value": "items",
-            "displayValue": "line_items [{ }]"
+            "displayValue": "line_items [ { } ]"
           },
           {
             "value": "value",
@@ -380,7 +380,7 @@ ___TEMPLATE_PARAMETERS___
           },
           {
             "value": "contents",
-            "displayValue": "contents [{ }]"
+            "displayValue": "contents [ { } ]"
           }
         ],
         "simpleValueType": true,
@@ -404,7 +404,7 @@ ___TEMPLATE_PARAMETERS___
           },
           {
             "value": "ids",
-            "displayValue": "item_ids"
+            "displayValue": "item_ids [ ]"
           },
           {
             "value": "numitems",
@@ -438,7 +438,7 @@ ___TEMPLATE_PARAMETERS___
           },
           {
             "value": "items",
-            "displayValue": "products"
+            "displayValue": "products [ { } ]"
           }
         ],
         "simpleValueType": true,
@@ -458,7 +458,7 @@ ___TEMPLATE_PARAMETERS___
         "radioItems": [
           {
             "value": "contents",
-            "displayValue": "contents",
+            "displayValue": "contents [ { } ]",
             "help": "Returns a list of product objects as described in \u003ca href\u003d\"https://developers.openai.com/ads/supported-events#contents\"\u003e official documentation\u003c/a\u003e as of June 2026.",
             "subParams": [
               {
@@ -481,7 +481,7 @@ ___TEMPLATE_PARAMETERS___
                   }
                 ],
                 "simpleValueType": true,
-                "help": "Choose either \u003cb\u003eproduct\u003c/b\u003e, \u003cb\u003eplan\u003c/b\u003e or \u003cb\u003epage\u003c/b\u003e  as required by OpenAI events API.",
+                "help": "Choose either \u003cb\u003eproduct\u003c/b\u003e, \u003cb\u003eplan\u003c/b\u003e or \u003cb\u003epage\u003c/b\u003e  as required.",
                 "defaultValue": "product",
                 "enablingConditions": [
                   {
@@ -528,7 +528,7 @@ ___TEMPLATE_PARAMETERS___
         "name": "orderItems",
         "displayName": "Array of Objects",
         "simpleValueType": true,
-        "help": "[{}] any structured array of item objects",
+        "help": "[ {} ] any structured array of item objects",
         "valueValidators": [
           {
             "type": "NON_EMPTY"
@@ -546,51 +546,131 @@ ___TEMPLATE_PARAMETERS___
       {
         "type": "TEXT",
         "name": "keyId",
-        "displayName": "Product ID/SKU",
+        "displayName": "Product ID/SKU Key",
         "simpleValueType": true,
         "valueValidators": [
           {
             "type": "NON_EMPTY"
+          }
+        ],
+        "valueHint": "item_id"
+      },
+      {
+        "type": "CHECKBOX",
+        "name": "useAdditionalKeyId",
+        "checkboxText": "Use additional Product ID/SKU Key Source",
+        "simpleValueType": true,
+        "subParams": [
+          {
+            "type": "TEXT",
+            "name": "keyIdAdditional",
+            "displayName": "Additional Product ID/SKU Key",
+            "simpleValueType": true,
+            "valueValidators": [
+              {
+                "type": "NON_EMPTY"
+              }
+            ],
+            "enablingConditions": [
+              {
+                "paramName": "useAdditionalKeyId",
+                "paramValue": true,
+                "type": "EQUALS"
+              }
+            ],
+            "valueHint": "productId"
+          }
+        ],
+        "help": "When enabled, the variable first checks this value as the source for the Product ID/SKU Key. If not found, it falls back to the main Product ID/SKU Key specified above."
+      },
+      {
+        "type": "CHECKBOX",
+        "name": "formatIdInShopifyFormat",
+        "checkboxText": "Format Product ID in Shopify Product Feed format",
+        "simpleValueType": true,
+        "help": "When enabled, the Product ID will be formatted as:\n\u003cbr/\u003e\n\u003ci\u003eshopify_{Market Code}_{Product ID/SKU}_{Product Variant}\u003c/i\u003e\n\u003cbr/\u003e\u003cbr/\u003e\nIt only formats the value if both Product ID/SKU and Product Variant are found. Otherwise, it defaults to Product ID/SKU.",
+        "subParams": [
+          {
+            "type": "TEXT",
+            "name": "shopifyKeyVariant",
+            "displayName": "Product Variant ID Key",
+            "simpleValueType": true,
+            "valueValidators": [
+              {
+                "type": "NON_EMPTY"
+              }
+            ],
+            "enablingConditions": [
+              {
+                "paramName": "formatIdInShopifyFormat",
+                "paramValue": true,
+                "type": "EQUALS"
+              }
+            ],
+            "valueHint": "variant_id"
+          },
+          {
+            "type": "TEXT",
+            "name": "shopifyMarketCode",
+            "displayName": "Shopify Market Code",
+            "simpleValueType": true,
+            "valueHint": "US",
+            "help": "ISO Market Code (for Custom Shopify) e.g., BR, GB, US. Or ZZ if using the new Merchant API.",
+            "enablingConditions": [
+              {
+                "paramName": "formatIdInShopifyFormat",
+                "paramValue": true,
+                "type": "EQUALS"
+              }
+            ],
+            "valueValidators": [
+              {
+                "type": "NON_EMPTY"
+              }
+            ]
           }
         ]
       },
       {
         "type": "TEXT",
         "name": "keyNm",
-        "displayName": "Product Name",
+        "displayName": "Product Name Key",
         "simpleValueType": true,
         "valueValidators": [
           {
             "type": "NON_EMPTY"
           }
-        ]
+        ],
+        "valueHint": "item_name"
       },
       {
         "type": "TEXT",
         "name": "keyPr",
-        "displayName": "Product Price",
+        "displayName": "Product Price Key",
         "simpleValueType": true,
         "valueValidators": [
           {
             "type": "NON_EMPTY"
           }
-        ]
+        ],
+        "valueHint": "price"
       },
       {
         "type": "TEXT",
         "name": "keyQt",
-        "displayName": "Product Quantity",
+        "displayName": "Product Quantity Key",
         "simpleValueType": true,
         "valueValidators": [
           {
             "type": "NON_EMPTY"
           }
-        ]
+        ],
+        "valueHint": "quantity"
       },
       {
         "type": "TEXT",
         "name": "keyCat",
-        "displayName": "Product Category",
+        "displayName": "Product Category Key",
         "simpleValueType": true,
         "enablingConditions": [
           {
@@ -613,12 +693,13 @@ ___TEMPLATE_PARAMETERS___
             "paramValue": "reddit",
             "type": "EQUALS"
           }
-        ]
+        ],
+        "valueHint": "category"
       },
       {
         "type": "TEXT",
         "name": "keyImg",
-        "displayName": "Product Image URL",
+        "displayName": "Product Image URL Key",
         "simpleValueType": true,
         "enablingConditions": [
           {
@@ -626,7 +707,8 @@ ___TEMPLATE_PARAMETERS___
             "paramValue": "klaviyo",
             "type": "EQUALS"
           }
-        ]
+        ],
+        "valueHint": "image_url"
       },
       {
         "type": "TEXT",
@@ -645,14 +727,15 @@ ___TEMPLATE_PARAMETERS___
           {
             "type": "NON_EMPTY"
           }
-        ]
+        ],
+        "valueHint": "currency"
       },
       {
         "type": "CHECKBOX",
         "name": "buildCatTree",
         "checkboxText": "Build Category Tree?",
         "simpleValueType": true,
-        "help": "If your items have multiple categories, create a tree in \u0027cat1 \u003e cat2 \u003e cat3\u0027 string format",
+        "help": "If your items have multiple categories, create a tree in \u0027cat1 \u003e cat2 \u003e cat3\u0027 string format.",
         "enablingConditions": [
           {
             "paramName": "platform",
@@ -666,7 +749,7 @@ ___TEMPLATE_PARAMETERS___
         "name": "keyCatList",
         "displayName": "Category parameter keys",
         "simpleValueType": true,
-        "help": "coma separated in order of appearance in tree, like: \u0027cat_key,mykey,custom_var_7\u0027",
+        "help": "Comma-separated in order of appearance in tree, such as: \u0027cat_key,mykey,custom_var_7\u0027",
         "enablingConditions": [
           {
             "paramName": "buildCatTree",
@@ -718,14 +801,14 @@ ___TEMPLATE_PARAMETERS___
             "type": "EQUALS"
           }
         ],
-        "help": "discount parameter KEY for input array"
+        "help": "Discount parameter key for input array."
       },
       {
         "type": "TEXT",
         "name": "discOrderLevel",
         "displayName": "Order-level discount amount",
         "simpleValueType": true,
-        "help": "order-level discount VALUE",
+        "help": "Order-level discount value.",
         "enablingConditions": [
           {
             "paramName": "discConfig",
@@ -788,7 +871,7 @@ ___TEMPLATE_PARAMETERS___
         "name": "taxDeductPercent",
         "displayName": "Tax %",
         "simpleValueType": true,
-        "help": "just number, no % symbol",
+        "help": "Just number, no % symbol.",
         "valueValidators": [],
         "enablingConditions": [
           {
@@ -821,7 +904,6 @@ ___TEMPLATE_PARAMETERS___
       {
         "type": "SIMPLE_TABLE",
         "name": "customParams",
-        "displayName": "",
         "simpleTableColumns": [
           {
             "defaultValue": "",
@@ -869,7 +951,7 @@ const makeNumber = require('makeNumber');
 const makeString = require('makeString');
 const makeTableMap = require('makeTableMap');
 const getType = require('getType');
-const math = require('Math');
+const Math = require('Math');
 const Object = require('Object');
 
 /*==============================================================================
@@ -926,6 +1008,21 @@ function runTask() {
   }
 }
 
+function getId(item) {
+  let id = item[keyId];
+
+  if (data.useAdditionalKeyId && data.keyIdAdditional && item[data.keyIdAdditional]) {
+    id = item[data.keyIdAdditional];
+  }
+
+  if (data.formatIdInShopifyFormat && data.shopifyKeyVariant && item[data.shopifyKeyVariant]) {
+    const marketCode = data.shopifyMarketCode || 'ZZ';
+    if (id) id = 'shopify_' + marketCode + '_' + id + '_' + item[data.shopifyKeyVariant];
+  }
+
+  return id;
+}
+
 function getNumItems(arr) {
   const num_items = arr.reduce((acc, curr) => {
     const quantity = curr[keyQt] ? makeInteger(curr[keyQt]) : 1;
@@ -940,7 +1037,7 @@ function getContentName(arr) {
 }
 
 function getContentIds(arr) {
-  const content_ids = arr.map((item) => item[keyId]);
+  const content_ids = arr.map((item) => getId(item));
   return content_ids;
 }
 
@@ -949,7 +1046,7 @@ function getItem(arr) {
   cat.push(arr[0][keyCat]);
 
   let item = {
-    ProductID: arr[0][keyId],
+    ProductID: getId(arr[0]),
     ProductName: arr[0][keyNm],
     Price: arr[0][keyPr],
     ImageURL: arr[0][keyImg],
@@ -960,16 +1057,16 @@ function getItem(arr) {
 }
 
 function getValue(arr) {
-  const platform = data.platform;
-  const keyCurrency = data.keyCurrency || 'currency';
-  const currency = arr[0][keyCurrency] || copyFromDataLayer(keyCurrency);
   const value = arr.reduce((acc, curr) => {
     const itemPrice = curr[keyPr] ? makeNumber(curr[keyPr]) : 0;
     const itemQuantity = curr[keyQt];
     return acc + (itemQuantity ? makeInteger(itemQuantity) * itemPrice : itemPrice);
   }, 0);
 
+  const platform = data.platform;
   if (platform === 'openai') {
+    const keyCurrency = data.keyCurrency || 'currency';
+    const currency = arr[0][keyCurrency] || copyFromDataLayer(keyCurrency);
     return convertCurrencyValueToMinorUnit(value, currency);
   }
 
@@ -985,7 +1082,7 @@ function getContents(arr, platform) {
 
     if (platform === 'meta') {
       contents.push({
-        id: arr[i][keyId],
+        id: getId(arr[i]),
         quantity: qt,
         item_price: arr[i][keyPr]
       });
@@ -993,8 +1090,9 @@ function getContents(arr, platform) {
 
     if (platform === 'tiktok') {
       const contentType = data.contentType;
+      const id = getId(arr[i]);
       contents.push({
-        content_id: arr[i][keyId] ? makeString(arr[i][keyId]) : undefined,
+        content_id: id ? makeString(id) : undefined,
         content_type: contentType,
         content_category: arr[i][keyCat],
         content_name: arr[i][keyNm],
@@ -1005,7 +1103,7 @@ function getContents(arr, platform) {
 
     if (platform === 'twitter') {
       contents.push({
-        content_id: arr[i][keyId],
+        content_id: getId(arr[i]),
         content_name: arr[i][keyNm],
         content_type: arr[i][keyCat],
         num_items: qt,
@@ -1021,13 +1119,14 @@ function getContents(arr, platform) {
     }
 
     if (platform === 'openai') {
-      const keyCurrency = data.currency || 'currency';
+      const keyCurrency = data.keyCurrency || 'currency';
       const contentType = data.contentTypeOpenAI;
-      const amount = arr[i][keyPr];
+      const id = getId(arr[i]);
+      const amount = arr[i][keyPr] ? makeNumber(arr[i][keyPr]) : 0;
       const currency = arr[i][keyCurrency] || copyFromDataLayer(keyCurrency);
       contents.push({
-        id: arr[i][keyId],
-        name: arr[i][keyNm],
+        id: id ? makeString(id) : undefined,
+        name: arr[i][keyNm] ? makeString(arr[i][keyNm]) : undefined,
         quantity: qt,
         amount: convertCurrencyValueToMinorUnit(amount, currency),
         content_type: contentType,
@@ -1056,7 +1155,7 @@ function getItems(arr, platform) {
 
     if (platform === 'ga4') {
       let itemObj = {
-        item_id: arr[i][keyId],
+        item_id: getId(arr[i]),
         item_name: arr[i][keyNm],
         quantity: qt,
         price: arr[i][keyPr],
@@ -1078,7 +1177,7 @@ function getItems(arr, platform) {
       cat.push(arr[i][keyCat]);
 
       let itemObj = {
-        ProductID: arr[i][keyId],
+        ProductID: getId(arr[i]),
         ProductName: arr[i][keyNm],
         Quantity: qt,
         ItemPrice: arr[i][keyPr],
@@ -1097,7 +1196,7 @@ function getItems(arr, platform) {
 
     if (platform === 'criteo') {
       let itemObj = {
-        id: arr[i][keyId],
+        id: getId(arr[i]),
         quantity: qt,
         price: arr[i][keyPr]
       };
@@ -1106,8 +1205,9 @@ function getItems(arr, platform) {
     }
 
     if (platform === 'gAdsOff') {
+      const id = getId(arr[i]);
       items.push({
-        productId: arr[i][keyId] ? makeString(arr[i][keyId]) : undefined,
+        productId: id ? makeString(id) : undefined,
         quantity: qt,
         unitPrice: makeNumber(arr[i][keyPr])
       });
@@ -1115,7 +1215,7 @@ function getItems(arr, platform) {
 
     if (platform === 'pinterest') {
       items.push({
-        product_id: arr[i][keyId],
+        product_id: getId(arr[i]),
         product_name: arr[i][keyNm],
         product_quantity: qt,
         product_price: arr[i][keyPr] ? makeNumber(arr[i][keyPr]) : 0
@@ -1123,8 +1223,9 @@ function getItems(arr, platform) {
     }
 
     if (platform === 'reddit') {
+      const id = getId(arr[i]);
       items.push({
-        id: arr[i][keyId] ? makeString(arr[i][keyId]) : undefined,
+        id: id ? makeString(id) : undefined,
         category: arr[i][keyCat],
         name: arr[i][keyNm]
       });
@@ -1137,8 +1238,8 @@ function getItems(arr, platform) {
 
       if (data.taxPriceConfig === 'priceDeduct' && taxDeductPercent && taxDeductPercent > 0) {
         let tmp = p / (taxDeductPercent / 100 + 1);
-        price = (math.round(tmp * 100) / 100) * 100 * qt;
-        price = math.round(price * 100) / 100;
+        price = toFixed2(tmp) * 100 * qt;
+        price = toFixed2(price);
       }
 
       if (data.discConfig === 'item_level' && arr[i][keyDisc]) {
@@ -1152,7 +1253,7 @@ function getItems(arr, platform) {
       }
 
       let itemObj = {
-        sku: arr[i][keyId],
+        sku: getId(arr[i]),
         product_name: arr[i][keyNm],
         quantity: qt,
         amount: price > 0 ? price : toFixed2(p * 100 * qt),
@@ -1191,8 +1292,9 @@ function getItems(arr, platform) {
   Helpers
 ==============================================================================*/
 
-function toFixed2(num) {
-  return math.round(num * 100) / 100;
+function toFixed2(value) {
+  if (!value) return value;
+  return Math.round(makeNumber(value) * 100) / 100;
 }
 
 function endsWith(str, suffix) {
@@ -1215,12 +1317,7 @@ function convertCurrencyValueToMinorUnit(value, currency) {
   if (zeroDecimalCurrencies.indexOf(upperCurrency) !== -1) multiplier = 1;
   else if (threeDecimalCurrencies.indexOf(upperCurrency) !== -1) multiplier = 1000;
 
-  return makeInteger(roundValue(value * multiplier));
-}
-
-function roundValue(value) {
-  if (!value) return value;
-  return math.round(makeNumber(value) * 100) / 100;
+  return makeInteger(toFixed2(value * multiplier));
 }
 
 
@@ -1258,9 +1355,10 @@ scenarios: []
 
 ___NOTES___
 
-Created on 12/10/2021, 11:11:20
-
 2026-15-06 - Change Notes:
  - Add OpenAI Ads parameters.
+ - Add additional source for Product ID/SKU.
+ - Add Shopify Product ID Feed format support.
 
+Created on 12/10/2021, 11:11:20
 

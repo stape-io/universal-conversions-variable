@@ -4,7 +4,7 @@ const makeNumber = require('makeNumber');
 const makeString = require('makeString');
 const makeTableMap = require('makeTableMap');
 const getType = require('getType');
-const math = require('Math');
+const Math = require('Math');
 const Object = require('Object');
 
 /*==============================================================================
@@ -61,6 +61,21 @@ function runTask() {
   }
 }
 
+function getId(item) {
+  let id = item[keyId];
+
+  if (data.useAdditionalKeyId && data.keyIdAdditional && item[data.keyIdAdditional]) {
+    id = item[data.keyIdAdditional];
+  }
+
+  if (data.formatIdInShopifyFormat && data.shopifyKeyVariant && item[data.shopifyKeyVariant]) {
+    const marketCode = data.shopifyMarketCode || 'ZZ';
+    if (id) id = 'shopify_' + marketCode + '_' + id + '_' + item[data.shopifyKeyVariant];
+  }
+
+  return id;
+}
+
 function getNumItems(arr) {
   const num_items = arr.reduce((acc, curr) => {
     const quantity = curr[keyQt] ? makeInteger(curr[keyQt]) : 1;
@@ -75,7 +90,7 @@ function getContentName(arr) {
 }
 
 function getContentIds(arr) {
-  const content_ids = arr.map((item) => item[keyId]);
+  const content_ids = arr.map((item) => getId(item));
   return content_ids;
 }
 
@@ -84,7 +99,7 @@ function getItem(arr) {
   cat.push(arr[0][keyCat]);
 
   let item = {
-    ProductID: arr[0][keyId],
+    ProductID: getId(arr[0]),
     ProductName: arr[0][keyNm],
     Price: arr[0][keyPr],
     ImageURL: arr[0][keyImg],
@@ -95,16 +110,16 @@ function getItem(arr) {
 }
 
 function getValue(arr) {
-  const platform = data.platform;
-  const keyCurrency = data.keyCurrency || 'currency';
-  const currency = arr[0][keyCurrency] || copyFromDataLayer(keyCurrency);
   const value = arr.reduce((acc, curr) => {
     const itemPrice = curr[keyPr] ? makeNumber(curr[keyPr]) : 0;
     const itemQuantity = curr[keyQt];
     return acc + (itemQuantity ? makeInteger(itemQuantity) * itemPrice : itemPrice);
   }, 0);
 
+  const platform = data.platform;
   if (platform === 'openai') {
+    const keyCurrency = data.keyCurrency || 'currency';
+    const currency = arr[0][keyCurrency] || copyFromDataLayer(keyCurrency);
     return convertCurrencyValueToMinorUnit(value, currency);
   }
 
@@ -120,7 +135,7 @@ function getContents(arr, platform) {
 
     if (platform === 'meta') {
       contents.push({
-        id: arr[i][keyId],
+        id: getId(arr[i]),
         quantity: qt,
         item_price: arr[i][keyPr]
       });
@@ -128,8 +143,9 @@ function getContents(arr, platform) {
 
     if (platform === 'tiktok') {
       const contentType = data.contentType;
+      const id = getId(arr[i]);
       contents.push({
-        content_id: arr[i][keyId] ? makeString(arr[i][keyId]) : undefined,
+        content_id: id ? makeString(id) : undefined,
         content_type: contentType,
         content_category: arr[i][keyCat],
         content_name: arr[i][keyNm],
@@ -140,7 +156,7 @@ function getContents(arr, platform) {
 
     if (platform === 'twitter') {
       contents.push({
-        content_id: arr[i][keyId],
+        content_id: getId(arr[i]),
         content_name: arr[i][keyNm],
         content_type: arr[i][keyCat],
         num_items: qt,
@@ -156,13 +172,14 @@ function getContents(arr, platform) {
     }
 
     if (platform === 'openai') {
-      const keyCurrency = data.currency || 'currency';
+      const keyCurrency = data.keyCurrency || 'currency';
       const contentType = data.contentTypeOpenAI;
-      const amount = arr[i][keyPr];
+      const id = getId(arr[i]);
+      const amount = arr[i][keyPr] ? makeNumber(arr[i][keyPr]) : 0;
       const currency = arr[i][keyCurrency] || copyFromDataLayer(keyCurrency);
       contents.push({
-        id: arr[i][keyId],
-        name: arr[i][keyNm],
+        id: id ? makeString(id) : undefined,
+        name: arr[i][keyNm] ? makeString(arr[i][keyNm]) : undefined,
         quantity: qt,
         amount: convertCurrencyValueToMinorUnit(amount, currency),
         content_type: contentType,
@@ -191,7 +208,7 @@ function getItems(arr, platform) {
 
     if (platform === 'ga4') {
       let itemObj = {
-        item_id: arr[i][keyId],
+        item_id: getId(arr[i]),
         item_name: arr[i][keyNm],
         quantity: qt,
         price: arr[i][keyPr],
@@ -213,7 +230,7 @@ function getItems(arr, platform) {
       cat.push(arr[i][keyCat]);
 
       let itemObj = {
-        ProductID: arr[i][keyId],
+        ProductID: getId(arr[i]),
         ProductName: arr[i][keyNm],
         Quantity: qt,
         ItemPrice: arr[i][keyPr],
@@ -232,7 +249,7 @@ function getItems(arr, platform) {
 
     if (platform === 'criteo') {
       let itemObj = {
-        id: arr[i][keyId],
+        id: getId(arr[i]),
         quantity: qt,
         price: arr[i][keyPr]
       };
@@ -241,8 +258,9 @@ function getItems(arr, platform) {
     }
 
     if (platform === 'gAdsOff') {
+      const id = getId(arr[i]);
       items.push({
-        productId: arr[i][keyId] ? makeString(arr[i][keyId]) : undefined,
+        productId: id ? makeString(id) : undefined,
         quantity: qt,
         unitPrice: makeNumber(arr[i][keyPr])
       });
@@ -250,7 +268,7 @@ function getItems(arr, platform) {
 
     if (platform === 'pinterest') {
       items.push({
-        product_id: arr[i][keyId],
+        product_id: getId(arr[i]),
         product_name: arr[i][keyNm],
         product_quantity: qt,
         product_price: arr[i][keyPr] ? makeNumber(arr[i][keyPr]) : 0
@@ -258,8 +276,9 @@ function getItems(arr, platform) {
     }
 
     if (platform === 'reddit') {
+      const id = getId(arr[i]);
       items.push({
-        id: arr[i][keyId] ? makeString(arr[i][keyId]) : undefined,
+        id: id ? makeString(id) : undefined,
         category: arr[i][keyCat],
         name: arr[i][keyNm]
       });
@@ -272,8 +291,8 @@ function getItems(arr, platform) {
 
       if (data.taxPriceConfig === 'priceDeduct' && taxDeductPercent && taxDeductPercent > 0) {
         let tmp = p / (taxDeductPercent / 100 + 1);
-        price = (math.round(tmp * 100) / 100) * 100 * qt;
-        price = math.round(price * 100) / 100;
+        price = toFixed2(tmp) * 100 * qt;
+        price = toFixed2(price);
       }
 
       if (data.discConfig === 'item_level' && arr[i][keyDisc]) {
@@ -287,7 +306,7 @@ function getItems(arr, platform) {
       }
 
       let itemObj = {
-        sku: arr[i][keyId],
+        sku: getId(arr[i]),
         product_name: arr[i][keyNm],
         quantity: qt,
         amount: price > 0 ? price : toFixed2(p * 100 * qt),
@@ -326,8 +345,9 @@ function getItems(arr, platform) {
   Helpers
 ==============================================================================*/
 
-function toFixed2(num) {
-  return math.round(num * 100) / 100;
+function toFixed2(value) {
+  if (!value) return value;
+  return Math.round(makeNumber(value) * 100) / 100;
 }
 
 function endsWith(str, suffix) {
@@ -350,10 +370,5 @@ function convertCurrencyValueToMinorUnit(value, currency) {
   if (zeroDecimalCurrencies.indexOf(upperCurrency) !== -1) multiplier = 1;
   else if (threeDecimalCurrencies.indexOf(upperCurrency) !== -1) multiplier = 1000;
 
-  return makeInteger(roundValue(value * multiplier));
-}
-
-function roundValue(value) {
-  if (!value) return value;
-  return math.round(makeNumber(value) * 100) / 100;
+  return makeInteger(toFixed2(value * multiplier));
 }
