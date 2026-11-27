@@ -19,7 +19,7 @@ ___INFO___
     "CONVERSIONS",
     "REMARKETING"
   ],
-  "description": "Maps and converts an input array of products to the supported platforms expected schema. By stape.io.",
+  "description": "Maps an array of products to the format each supported platform expects. By stape.io.",
   "containerContexts": [
     "WEB"
   ]
@@ -37,7 +37,7 @@ ___TEMPLATE_PARAMETERS___
     "selectItems": [
       {
         "value": "meta",
-        "displayValue": "Meta Pixel/CAPI"
+        "displayValue": "Meta Pixel / Conversions API"
       },
       {
         "value": "ga4",
@@ -45,51 +45,55 @@ ___TEMPLATE_PARAMETERS___
       },
       {
         "value": "tiktok",
-        "displayValue": "TikTok CAPI"
+        "displayValue": "TikTok Pixel / Events API"
       },
       {
         "value": "twitter",
-        "displayValue": "Twitter CAPI"
+        "displayValue": "X (Twitter) Pixel / Conversion API"
       },
       {
         "value": "microsoft",
-        "displayValue": "Microsoft Ads"
+        "displayValue": "Microsoft Advertising UET"
       },
       {
         "value": "klaviyo",
-        "displayValue": "Klaviyo"
+        "displayValue": "Klaviyo Onsite Tracking"
       },
       {
         "value": "snap",
-        "displayValue": "Snapchat"
+        "displayValue": "Snapchat Pixel"
       },
       {
         "value": "gAdsOff",
-        "displayValue": "Google Ads Offline"
+        "displayValue": "Google Ads Offline Conversions"
       },
       {
         "value": "pinterest",
-        "displayValue": "Pinterest"
+        "displayValue": "Pinterest Tag"
       },
       {
         "value": "rakuten",
-        "displayValue": "Rakuten"
+        "displayValue": "Rakuten Advertising"
       },
       {
         "value": "criteo",
-        "displayValue": "Criteo"
+        "displayValue": "Criteo OneTag"
       },
       {
         "value": "reddit",
-        "displayValue": "Reddit"
+        "displayValue": "Reddit Pixel"
       },
       {
         "value": "openai",
-        "displayValue": "OpenAI"
+        "displayValue": "OpenAI (ChatGPT Ads) Measurement Pixel"
+      },
+      {
+        "value": "generic",
+        "displayValue": "Generic (Item ID Builder)"
       }
     ],
     "simpleValueType": true,
-    "help": "Choose which platform to generate parameter"
+    "help": "The platform to format the parameter for."
   },
   {
     "type": "GROUP",
@@ -104,7 +108,7 @@ ___TEMPLATE_PARAMETERS___
         "radioItems": [
           {
             "value": "contents",
-            "displayValue": "contents [ {} ]"
+            "displayValue": "contents [ { } ]"
           },
           {
             "value": "ids",
@@ -113,12 +117,12 @@ ___TEMPLATE_PARAMETERS___
           {
             "value": "name",
             "displayValue": "content_name \u0027 \u0027",
-            "help": "will only return value if there is one object in product array, since content_name parameter is applicable only to single product (type) events"
+            "help": "Returns a value only when the product array has one object, because content_name applies only to single-product events."
           },
           {
             "value": "value",
             "displayValue": "value",
-            "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
+            "help": "Calculated from product prices and quantities, without discounts. Not recommended for purchase events."
           },
           {
             "value": "numitems",
@@ -143,7 +147,7 @@ ___TEMPLATE_PARAMETERS___
           {
             "value": "value",
             "displayValue": "value",
-            "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
+            "help": "Calculated from product prices and quantities, without discounts. Not recommended for purchase events."
           },
           {
             "value": "items",
@@ -153,7 +157,7 @@ ___TEMPLATE_PARAMETERS___
           {
             "value": "ids",
             "displayValue": "ecomm_prodid",
-            "help": "for Ads Remarketing"
+            "help": "For Google Ads remarketing."
           }
         ],
         "simpleValueType": true,
@@ -194,7 +198,7 @@ ___TEMPLATE_PARAMETERS___
           {
             "value": "value",
             "displayValue": "value",
-            "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
+            "help": "Calculated from product prices and quantities, without discounts. Not recommended for purchase events."
           },
           {
             "value": "items",
@@ -218,12 +222,12 @@ ___TEMPLATE_PARAMETERS___
           {
             "value": "value",
             "displayValue": "value",
-            "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
+            "help": "Calculated from product prices and quantities, without discounts. Not recommended for purchase events."
           },
           {
             "value": "item",
             "displayValue": "item",
-            "help": "for ViewedProduct event"
+            "help": "For the Viewed Product event."
           },
           {
             "value": "items",
@@ -247,7 +251,7 @@ ___TEMPLATE_PARAMETERS___
           {
             "value": "value",
             "displayValue": "revenue_value",
-            "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
+            "help": "Calculated from product prices and quantities, without discounts. Not recommended for purchase events."
           }
         ],
         "simpleValueType": true,
@@ -266,7 +270,7 @@ ___TEMPLATE_PARAMETERS___
         "radioItems": [
           {
             "value": "contents",
-            "displayValue": "contents [ {} ]",
+            "displayValue": "contents [ { } ]",
             "subParams": [
               {
                 "type": "SELECT",
@@ -284,7 +288,7 @@ ___TEMPLATE_PARAMETERS___
                   }
                 ],
                 "simpleValueType": true,
-                "help": "choose either product or product_group as is required by TikTok events API",
+                "help": "Use product or product_group, as the TikTok Events API requires.",
                 "defaultValue": "product",
                 "enablingConditions": []
               }
@@ -293,12 +297,12 @@ ___TEMPLATE_PARAMETERS___
           {
             "value": "name",
             "displayValue": "content_name \u0027 \u0027",
-            "help": "will only return value if there is one object in product array, since content_name parameter is applicable only to single product (type) events"
+            "help": "Returns a value only when the product array has one object, because content_name applies only to single-product events."
           },
           {
             "value": "value",
             "displayValue": "value",
-            "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
+            "help": "Calculated from product prices and quantities, without discounts. Not recommended for purchase events."
           },
           {
             "value": "numitems",
@@ -328,7 +332,7 @@ ___TEMPLATE_PARAMETERS___
             "value": "value",
             "displayValue": "value",
             "subParams": [],
-            "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
+            "help": "Calculated from product prices and quantities, without discounts. Not recommended for purchase events."
           }
         ],
         "simpleValueType": true,
@@ -372,7 +376,7 @@ ___TEMPLATE_PARAMETERS___
             "value": "value",
             "displayValue": "value",
             "subParams": [],
-            "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
+            "help": "Calculated from product prices and quantities, without discounts. Not recommended for purchase events."
           },
           {
             "value": "ids",
@@ -400,7 +404,7 @@ ___TEMPLATE_PARAMETERS___
           {
             "value": "value",
             "displayValue": "price",
-            "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
+            "help": "Calculated from product prices and quantities, without discounts. Not recommended for purchase events."
           },
           {
             "value": "ids",
@@ -429,7 +433,7 @@ ___TEMPLATE_PARAMETERS___
           {
             "value": "value",
             "displayValue": "value",
-            "help": "use wisely, value will be calculated based on product prices and will not account for discounts. not recommended for purchase events"
+            "help": "Calculated from product prices and quantities, without discounts. Not recommended for purchase events."
           },
           {
             "value": "numitems",
@@ -459,7 +463,7 @@ ___TEMPLATE_PARAMETERS___
           {
             "value": "contents",
             "displayValue": "contents [ { } ]",
-            "help": "Returns a list of product objects as described in \u003ca href\u003d\"https://developers.openai.com/ads/supported-events#contents\"\u003e official documentation\u003c/a\u003e as of June 2026.",
+            "help": "Returns a list of product objects, as described in the \u003ca href\u003d\"https://developers.openai.com/ads/supported-events#contents\"\u003eofficial documentation\u003c/a\u003e as of June 2026.",
             "subParams": [
               {
                 "type": "SELECT",
@@ -481,7 +485,7 @@ ___TEMPLATE_PARAMETERS___
                   }
                 ],
                 "simpleValueType": true,
-                "help": "Choose either \u003cb\u003eproduct\u003c/b\u003e, \u003cb\u003eplan\u003c/b\u003e or \u003cb\u003epage\u003c/b\u003e  as required.",
+                "help": "Choose \u003cb\u003eproduct\u003c/b\u003e, \u003cb\u003eplan\u003c/b\u003e or \u003cb\u003epage\u003c/b\u003e.",
                 "defaultValue": "product",
                 "enablingConditions": [
                   {
@@ -502,7 +506,7 @@ ___TEMPLATE_PARAMETERS___
             "value": "value",
             "displayValue": "amount",
             "subParams": [],
-            "help": "Returns the total value amount as described in \u003ca href\u003d\"https://developers.openai.com/ads/supported-events#contents\"\u003e official documentation\u003c/a\u003e as of June 2026."
+            "help": "Returns the total value in the currency\u0027s minor unit, as described in the \u003ca href\u003d\"https://developers.openai.com/ads/supported-events#contents\"\u003eofficial documentation\u003c/a\u003e as of June 2026."
           }
         ],
         "simpleValueType": true,
@@ -514,6 +518,32 @@ ___TEMPLATE_PARAMETERS___
           }
         ],
         "help": "As described in the \u003ca href\u003d\"https://developers.openai.com/ads/supported-events\"\u003eofficial documentation\u003c/a\u003e."
+      },
+      {
+        "type": "RADIO",
+        "name": "generic_task",
+        "displayName": "What to return",
+        "radioItems": [
+          {
+            "value": "items",
+            "displayValue": "items [ { } ]",
+            "help": "Returns the Input Array items with all their keys, with the Product ID/SKU Key replaced by the rebuilt Product ID."
+          },
+          {
+            "value": "ids",
+            "displayValue": "ids [ ]",
+            "help": "Returns a flat array of the rebuilt Product IDs, e.g. for Meta \u003ci\u003econtent_ids\u003c/i\u003e."
+          }
+        ],
+        "simpleValueType": true,
+        "enablingConditions": [
+          {
+            "paramName": "platform",
+            "paramValue": "generic",
+            "type": "EQUALS"
+          }
+        ],
+        "defaultValue": "items"
       }
     ]
   },
@@ -528,7 +558,7 @@ ___TEMPLATE_PARAMETERS___
         "name": "orderItems",
         "displayName": "Array of Objects",
         "simpleValueType": true,
-        "help": "[ {} ] any structured array of item objects",
+        "help": "Any array of item objects [{}].",
         "valueValidators": [
           {
             "type": "NON_EMPTY"
@@ -558,7 +588,7 @@ ___TEMPLATE_PARAMETERS___
       {
         "type": "CHECKBOX",
         "name": "useAdditionalKeyId",
-        "checkboxText": "Use additional Product ID/SKU Key Source",
+        "checkboxText": "Use an additional Product ID/SKU Key",
         "simpleValueType": true,
         "subParams": [
           {
@@ -581,14 +611,14 @@ ___TEMPLATE_PARAMETERS___
             "valueHint": "productId"
           }
         ],
-        "help": "When enabled, the variable first checks this value as the source for the Product ID/SKU Key. If not found, it falls back to the main Product ID/SKU Key specified above."
+        "help": "When enabled, the Product ID is read from this key first. If the item has no value there, the Product ID/SKU Key above is used."
       },
       {
         "type": "CHECKBOX",
         "name": "formatIdInShopifyFormat",
         "checkboxText": "Format Product ID in Shopify Product Feed format",
         "simpleValueType": true,
-        "help": "When enabled, the Product ID will be formatted as:\n\u003cbr/\u003e\n\u003ci\u003eshopify_{Market Code}_{Product ID/SKU}_{Product Variant}\u003c/i\u003e\n\u003cbr/\u003e\u003cbr/\u003e\nIt only formats the value if both Product ID/SKU and Product Variant are found. Otherwise, it defaults to Product ID/SKU.",
+        "help": "When enabled, the Product ID is formatted as:\u003cbr/\u003e\u003ci\u003eshopify_{Market Code}_{Product ID/SKU}_{Variant ID}\u003c/i\u003e\u003cbr/\u003e\u003cbr/\u003eThe value is formatted only when both the Product ID/SKU and the Product Variant ID are found. Otherwise, the Product ID/SKU is returned unchanged.\u003cbr/\u003e\u003cbr/\u003eFor multi-market stores or other formats, use the \u003cstrong\u003eItem ID Builder\u003c/strong\u003e section instead.",
         "subParams": [
           {
             "type": "TEXT",
@@ -615,7 +645,7 @@ ___TEMPLATE_PARAMETERS___
             "displayName": "Shopify Market Code",
             "simpleValueType": true,
             "valueHint": "US",
-            "help": "ISO Market Code (for Custom Shopify) e.g., BR, GB, US. Or ZZ if using the new Merchant API.",
+            "help": "ISO country code of the Shopify market, e.g. BR, GB or US. Use ZZ if your feed comes from the new Merchant API.",
             "enablingConditions": [
               {
                 "paramName": "formatIdInShopifyFormat",
@@ -629,6 +659,13 @@ ___TEMPLATE_PARAMETERS___
               }
             ]
           }
+        ],
+        "enablingConditions": [
+          {
+            "paramName": "buildIdFromPattern",
+            "paramValue": true,
+            "type": "NOT_EQUALS"
+          }
         ]
       },
       {
@@ -641,7 +678,14 @@ ___TEMPLATE_PARAMETERS___
             "type": "NON_EMPTY"
           }
         ],
-        "valueHint": "item_name"
+        "valueHint": "item_name",
+        "enablingConditions": [
+          {
+            "paramName": "platform",
+            "paramValue": "generic",
+            "type": "NOT_EQUALS"
+          }
+        ]
       },
       {
         "type": "TEXT",
@@ -653,7 +697,14 @@ ___TEMPLATE_PARAMETERS___
             "type": "NON_EMPTY"
           }
         ],
-        "valueHint": "price"
+        "valueHint": "price",
+        "enablingConditions": [
+          {
+            "paramName": "platform",
+            "paramValue": "generic",
+            "type": "NOT_EQUALS"
+          }
+        ]
       },
       {
         "type": "TEXT",
@@ -665,7 +716,14 @@ ___TEMPLATE_PARAMETERS___
             "type": "NON_EMPTY"
           }
         ],
-        "valueHint": "quantity"
+        "valueHint": "quantity",
+        "enablingConditions": [
+          {
+            "paramName": "platform",
+            "paramValue": "generic",
+            "type": "NOT_EQUALS"
+          }
+        ]
       },
       {
         "type": "TEXT",
@@ -713,7 +771,7 @@ ___TEMPLATE_PARAMETERS___
       {
         "type": "TEXT",
         "name": "keyCurrency",
-        "displayName": "Currency",
+        "displayName": "Currency Key",
         "simpleValueType": true,
         "enablingConditions": [
           {
@@ -722,7 +780,7 @@ ___TEMPLATE_PARAMETERS___
             "type": "EQUALS"
           }
         ],
-        "help": "The key for the product price currency within the product object or within the dataLayer event.",
+        "help": "Key of the currency. It is read from the item and, if not found there, from the dataLayer.",
         "valueValidators": [
           {
             "type": "NON_EMPTY"
@@ -733,9 +791,9 @@ ___TEMPLATE_PARAMETERS___
       {
         "type": "CHECKBOX",
         "name": "buildCatTree",
-        "checkboxText": "Build Category Tree?",
+        "checkboxText": "Build Rakuten Category Tree",
         "simpleValueType": true,
-        "help": "If your items have multiple categories, create a tree in \u0027cat1 \u003e cat2 \u003e cat3\u0027 string format.",
+        "help": "Joins several category keys into one string, e.g. \u003ci\u003ecat1 \u003e cat2 \u003e cat3\u003c/i\u003e.",
         "enablingConditions": [
           {
             "paramName": "platform",
@@ -747,9 +805,9 @@ ___TEMPLATE_PARAMETERS___
       {
         "type": "TEXT",
         "name": "keyCatList",
-        "displayName": "Category parameter keys",
+        "displayName": "Category Keys",
         "simpleValueType": true,
-        "help": "Comma-separated in order of appearance in tree, such as: \u0027cat_key,mykey,custom_var_7\u0027",
+        "help": "Comma-separated, in tree order, e.g. \u003ci\u003ecat_key,mykey,custom_var_7\u003c/i\u003e.",
         "enablingConditions": [
           {
             "paramName": "buildCatTree",
@@ -759,7 +817,256 @@ ___TEMPLATE_PARAMETERS___
         ]
       }
     ],
-    "help": "keys for corresponding parameters within input array"
+    "help": "Input Array keys to read each parameter from."
+  },
+  {
+    "type": "GROUP",
+    "name": "idBuilderGroup",
+    "displayName": "Item ID Builder",
+    "groupStyle": "ZIPPY_OPEN_ON_PARAM",
+    "subParams": [
+      {
+        "type": "CHECKBOX",
+        "name": "buildIdFromPattern",
+        "checkboxText": "Build Product ID from a pattern",
+        "simpleValueType": true,
+        "help": "When enabled, the Product ID is rebuilt from the \u003cstrong\u003eID Pattern\u003c/strong\u003e below, so it matches the IDs in your Google Merchant Center, Meta or TikTok catalog.\u003cbr/\u003e\u003cbr/\u003eExample: \u003ci\u003eshopify_{country}_{item_id}_{variant}\u003c/i\u003e returns \u003ci\u003eshopify_SE_8123456789_44556677\u003c/i\u003e.\u003cbr/\u003e\u003cbr/\u003eTakes precedence over the Shopify Product Feed format option.",
+        "subParams": [
+          {
+            "type": "TEXT",
+            "name": "idPattern",
+            "displayName": "ID Pattern",
+            "simpleValueType": true,
+            "valueHint": "shopify_{country}_{item_id}_{variant}",
+            "valueValidators": [
+              {
+                "type": "NON_EMPTY"
+              }
+            ],
+            "enablingConditions": [
+              {
+                "paramName": "buildIdFromPattern",
+                "paramValue": true,
+                "type": "EQUALS"
+              }
+            ],
+            "help": "Text with tokens in curly braces. Each \u003ci\u003e{token}\u003c/i\u003e is replaced, in this order, by:\u003cbr/\u003e1. \u003cstrong\u003e{id}\u003c/strong\u003e: the Product ID read with the Product ID/SKU Key (or the Additional Product ID/SKU Key, if enabled).\u003cbr/\u003e2. The Hostname Lookup value, if the token matches its Token Name.\u003cbr/\u003e3. A row with the same name in \u003cstrong\u003ePattern Variables\u003c/strong\u003e.\u003cbr/\u003e4. Otherwise, the item key with the same name, e.g. \u003ci\u003e{item_id}\u003c/i\u003e or \u003ci\u003e{item_variant}\u003c/i\u003e. Nested keys use dots, e.g. \u003ci\u003e{variant.id}\u003c/i\u003e.\u003cbr/\u003e\u003cbr/\u003eText outside curly braces is kept as written. A pattern with no token is ignored, as if a token were missing."
+          },
+          {
+            "type": "SIMPLE_TABLE",
+            "name": "idPatternVariables",
+            "displayName": "Pattern Variables",
+            "simpleTableColumns": [
+              {
+                "defaultValue": "",
+                "displayName": "Token Name",
+                "name": "name",
+                "type": "TEXT",
+                "isUnique": true,
+                "valueHint": "country",
+                "valueValidators": [
+                  {
+                    "type": "NON_EMPTY"
+                  },
+                  {
+                    "type": "REGEX",
+                    "args": [
+                      "^(.?|.{3,}|[^i].|i[^d])$"
+                    ],
+                    "errorMessage": "The Token Name id is reserved for the original Product ID."
+                  }
+                ]
+              },
+              {
+                "defaultValue": "value",
+                "displayName": "Source",
+                "name": "source",
+                "type": "SELECT",
+                "selectItems": [
+                  {
+                    "value": "value",
+                    "displayValue": "Value (text or variable)"
+                  },
+                  {
+                    "value": "itemKey",
+                    "displayValue": "Item key"
+                  }
+                ]
+              },
+              {
+                "defaultValue": "",
+                "displayName": "Value",
+                "name": "value",
+                "type": "TEXT",
+                "valueHint": "SE"
+              }
+            ],
+            "newRowButtonText": "Add variable",
+            "enablingConditions": [
+              {
+                "paramName": "buildIdFromPattern",
+                "paramValue": true,
+                "type": "EQUALS"
+              }
+            ],
+            "help": "Defines tokens used in the ID Pattern.\u003cbr/\u003e\u003cstrong\u003eValue\u003c/strong\u003e: the token is replaced by the text or GTM variable in the Value column, e.g. \u003ci\u003ecountry\u003c/i\u003e \u003d \u003ci\u003eSE\u003c/i\u003e or \u003ci\u003e{{Market}}\u003c/i\u003e.\u003cbr/\u003e\u003cstrong\u003eItem key\u003c/strong\u003e: the token is replaced by that key of each item, e.g. \u003ci\u003evariant\u003c/i\u003e \u003d \u003ci\u003eitem_variant\u003c/i\u003e.\u003cbr/\u003eThe Token Name \u003ci\u003eid\u003c/i\u003e is reserved for the original Product ID."
+          },
+          {
+            "type": "CHECKBOX",
+            "name": "useHostnameLookup",
+            "checkboxText": "Fill a token from a hostname lookup table",
+            "simpleValueType": true,
+            "enablingConditions": [
+              {
+                "paramName": "buildIdFromPattern",
+                "paramValue": true,
+                "type": "EQUALS"
+              }
+            ],
+            "help": "Use it for multi-market stores where each domain has its own feed, e.g. \u003ci\u003eshop.no\u003c/i\u003e \u003d \u003ci\u003eNO\u003c/i\u003e, \u003ci\u003eshop.se\u003c/i\u003e \u003d \u003ci\u003eSE\u003c/i\u003e. Hostnames are compared in lower case and without a leading \u003ci\u003ewww.\u003c/i\u003e.",
+            "subParams": [
+              {
+                "type": "TEXT",
+                "name": "hostnameLookupToken",
+                "displayName": "Token Name",
+                "simpleValueType": true,
+                "defaultValue": "country",
+                "valueValidators": [
+                  {
+                    "type": "NON_EMPTY"
+                  }
+                ],
+                "enablingConditions": [
+                  {
+                    "paramName": "useHostnameLookup",
+                    "paramValue": true,
+                    "type": "EQUALS"
+                  }
+                ],
+                "help": "The token this lookup fills, e.g. \u003ci\u003ecountry\u003c/i\u003e for \u003ci\u003e{country}\u003c/i\u003e."
+              },
+              {
+                "type": "SIMPLE_TABLE",
+                "name": "hostnameLookupTable",
+                "displayName": "Hostname Lookup Table",
+                "simpleTableColumns": [
+                  {
+                    "defaultValue": "",
+                    "displayName": "Hostname",
+                    "name": "hostname",
+                    "type": "TEXT",
+                    "isUnique": true,
+                    "valueHint": "shop.no",
+                    "valueValidators": [
+                      {
+                        "type": "NON_EMPTY"
+                      }
+                    ]
+                  },
+                  {
+                    "defaultValue": "",
+                    "displayName": "Token Value",
+                    "name": "tokenValue",
+                    "type": "TEXT",
+                    "valueHint": "NO"
+                  }
+                ],
+                "newRowButtonText": "Add hostname",
+                "enablingConditions": [
+                  {
+                    "paramName": "useHostnameLookup",
+                    "paramValue": true,
+                    "type": "EQUALS"
+                  }
+                ]
+              },
+              {
+                "type": "TEXT",
+                "name": "hostnameLookupDefault",
+                "displayName": "Default Value",
+                "simpleValueType": true,
+                "help": "Used when no hostname matches, or when the matching row has an empty Token Value. If empty, the token counts as missing.",
+                "enablingConditions": [
+                  {
+                    "paramName": "useHostnameLookup",
+                    "paramValue": true,
+                    "type": "EQUALS"
+                  }
+                ]
+              },
+              {
+                "type": "TEXT",
+                "name": "hostnameLookupSource",
+                "displayName": "Hostname (optional)",
+                "simpleValueType": true,
+                "help": "Leave empty to use the hostname of the current page. Set a hostname or URL variable to look up another value.",
+                "enablingConditions": [
+                  {
+                    "paramName": "useHostnameLookup",
+                    "paramValue": true,
+                    "type": "EQUALS"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "CHECKBOX",
+            "name": "stripShopifyGid",
+            "checkboxText": "Strip Shopify GID prefixes",
+            "simpleValueType": true,
+            "defaultValue": true,
+            "enablingConditions": [
+              {
+                "paramName": "buildIdFromPattern",
+                "paramValue": true,
+                "type": "EQUALS"
+              }
+            ],
+            "help": "Token values like \u003ci\u003egid://shopify/ProductVariant/44556677\u003c/i\u003e become \u003ci\u003e44556677\u003c/i\u003e. The same applies to an original Product ID kept because a token is missing."
+          },
+          {
+            "type": "RADIO",
+            "name": "onMissingToken",
+            "displayName": "If a token is missing or empty",
+            "radioItems": [
+              {
+                "value": "original",
+                "displayValue": "Keep the original Product ID"
+              },
+              {
+                "value": "fallback",
+                "displayValue": "Use a fallback pattern",
+                "subParams": [
+                  {
+                    "type": "TEXT",
+                    "name": "idFallbackPattern",
+                    "displayName": "Fallback ID Pattern",
+                    "simpleValueType": true,
+                    "valueHint": "shopify_{country}_{item_id}",
+                    "valueValidators": [
+                      {
+                        "type": "NON_EMPTY"
+                      }
+                    ],
+                    "help": "Same syntax as the ID Pattern. If a token is missing here too, the original Product ID is kept."
+                  }
+                ]
+              }
+            ],
+            "simpleValueType": true,
+            "defaultValue": "original",
+            "enablingConditions": [
+              {
+                "paramName": "buildIdFromPattern",
+                "paramValue": true,
+                "type": "EQUALS"
+              }
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "type": "GROUP",
@@ -770,16 +1077,16 @@ ___TEMPLATE_PARAMETERS___
       {
         "type": "SELECT",
         "name": "discConfig",
-        "displayName": "Choose discount configuration method",
+        "displayName": "Discount Source",
         "macrosInSelect": false,
         "selectItems": [
           {
             "value": "item_level",
-            "displayValue": "From item-level"
+            "displayValue": "From item level"
           },
           {
             "value": "order_level",
-            "displayValue": "From order-level"
+            "displayValue": "From order level"
           },
           {
             "value": "none",
@@ -792,7 +1099,7 @@ ___TEMPLATE_PARAMETERS___
       {
         "type": "TEXT",
         "name": "keyDiscItemLevel",
-        "displayName": "Parameter key for item-level discount",
+        "displayName": "Item-Level Discount Key",
         "simpleValueType": true,
         "enablingConditions": [
           {
@@ -801,14 +1108,14 @@ ___TEMPLATE_PARAMETERS___
             "type": "EQUALS"
           }
         ],
-        "help": "Discount parameter key for input array."
+        "help": "Input Array key of the item\u0027s discount."
       },
       {
         "type": "TEXT",
         "name": "discOrderLevel",
-        "displayName": "Order-level discount amount",
+        "displayName": "Order-Level Discount Amount",
         "simpleValueType": true,
-        "help": "Order-level discount value.",
+        "help": "Discount amount for the whole order.",
         "enablingConditions": [
           {
             "paramName": "discConfig",
@@ -835,7 +1142,7 @@ ___TEMPLATE_PARAMETERS___
       {
         "type": "SELECT",
         "name": "taxPriceConfig",
-        "displayName": "Item price tax application",
+        "displayName": "Item Price Tax",
         "macrosInSelect": false,
         "selectItems": [
           {
@@ -852,7 +1159,7 @@ ___TEMPLATE_PARAMETERS___
       {
         "type": "SELECT",
         "name": "taxDiscountConfig",
-        "displayName": "Discount tax application",
+        "displayName": "Discount Tax",
         "macrosInSelect": false,
         "selectItems": [
           {
@@ -871,7 +1178,7 @@ ___TEMPLATE_PARAMETERS___
         "name": "taxDeductPercent",
         "displayName": "Tax %",
         "simpleValueType": true,
-        "help": "Just number, no % symbol.",
+        "help": "A number without the % sign, e.g. 20.",
         "valueValidators": [],
         "enablingConditions": [
           {
@@ -907,19 +1214,20 @@ ___TEMPLATE_PARAMETERS___
         "simpleTableColumns": [
           {
             "defaultValue": "",
-            "displayName": "Custom parameter key in your array",
+            "displayName": "Input Array Key",
             "name": "cusKey",
             "type": "TEXT"
           },
           {
             "defaultValue": "",
-            "displayName": "Custom parameter name to return",
+            "displayName": "Output Key",
             "name": "cusName",
             "type": "TEXT"
           }
         ],
         "newRowButtonText": "Add Custom Parameter",
-        "alwaysInSummary": false
+        "alwaysInSummary": false,
+        "help": "Item keys to add to each output item."
       }
     ],
     "enablingConditions": [
@@ -946,6 +1254,7 @@ ___TEMPLATE_PARAMETERS___
 ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 
 const copyFromDataLayer = require('copyFromDataLayer');
+const getUrl = require('getUrl');
 const makeInteger = require('makeInteger');
 const makeNumber = require('makeNumber');
 const makeString = require('makeString');
@@ -953,6 +1262,7 @@ const makeTableMap = require('makeTableMap');
 const getType = require('getType');
 const Math = require('Math');
 const Object = require('Object');
+const parseUrl = require('parseUrl');
 
 /*==============================================================================
 ==============================================================================*/
@@ -970,6 +1280,7 @@ const customParamMap = data.customParams
   : {};
 const keyCatList = data.keyCatList ? data.keyCatList.split(',') : [];
 const inputArray = data.orderItems;
+const idBuilder = data.buildIdFromPattern ? createIdBuilder() : undefined;
 
 if (getType(inputArray) === 'array' && inputArray.length) return runTask();
 else return;
@@ -980,6 +1291,10 @@ else return;
 
 function runTask() {
   const platform = data.platform;
+  if (platform === 'generic') {
+    return data.generic_task === 'ids' ? getContentIds(inputArray) : getGenericItems(inputArray);
+  }
+
   const dataKeys = Object.keys(data);
   let task;
 
@@ -1014,6 +1329,8 @@ function getId(item) {
   if (data.useAdditionalKeyId && data.keyIdAdditional && item[data.keyIdAdditional]) {
     id = item[data.keyIdAdditional];
   }
+
+  if (idBuilder) return buildItemId(item, id);
 
   if (data.formatIdInShopifyFormat && data.shopifyKeyVariant && item[data.shopifyKeyVariant]) {
     const marketCode = data.shopifyMarketCode || 'ZZ';
@@ -1320,6 +1637,160 @@ function convertCurrencyValueToMinorUnit(value, currency) {
   return makeInteger(toFixed2(value * multiplier));
 }
 
+/*==============================================================================
+  Item ID Builder
+==============================================================================*/
+
+function getGenericItems(inputArray) {
+  return inputArray.map((item) => {
+    if (getType(item) !== 'object') return item;
+    const genericItem = {};
+    Object.keys(item).forEach((key) => {
+      genericItem[key] = item[key];
+    });
+    const id = getId(item);
+    if (id !== undefined) genericItem[keyId] = id;
+    return genericItem;
+  });
+}
+
+function createIdBuilder() {
+  const variables = {};
+  (data.idPatternVariables || []).forEach((row) => {
+    if (row && row.name) variables[makeString(row.name).trim()] = row;
+  });
+
+  return {
+    pattern: parsePattern(data.idPattern),
+    fallbackPattern:
+      data.onMissingToken === 'fallback' ? parsePattern(data.idFallbackPattern) : undefined,
+    variables: variables,
+    hostnameToken: data.useHostnameLookup
+      ? makeString(data.hostnameLookupToken || '').trim() || 'country'
+      : undefined,
+    hostnameValue: data.useHostnameLookup ? lookupHostnameValue() : undefined
+  };
+}
+
+function parsePattern(pattern) {
+  if (pattern === undefined || pattern === null || pattern === '') return undefined;
+  pattern = makeString(pattern);
+
+  const parts = [];
+  let hasToken = false;
+  let cursor = 0;
+  while (cursor < pattern.length) {
+    const close = pattern.indexOf('}', cursor);
+    const open = close === -1 ? -1 : pattern.lastIndexOf('{', close);
+    const tokenName = open >= cursor ? pattern.substring(open + 1, close).trim() : '';
+
+    if (!tokenName) {
+      const end = close === -1 ? pattern.length : close + 1;
+      parts.push({ text: pattern.substring(cursor, end) });
+      cursor = end;
+    } else {
+      if (open > cursor) parts.push({ text: pattern.substring(cursor, open) });
+      parts.push({ token: tokenName });
+      hasToken = true;
+      cursor = close + 1;
+    }
+  }
+  return hasToken ? parts : undefined;
+}
+
+function buildItemId(item, originalId) {
+  let id = buildIdFromParts(idBuilder.pattern, item, originalId);
+  if (id === undefined) id = buildIdFromParts(idBuilder.fallbackPattern, item, originalId);
+  return id === undefined ? stripShopifyGid(originalId) : id;
+}
+
+function buildIdFromParts(parts, item, originalId) {
+  if (!parts) return undefined;
+
+  let id = '';
+  for (let i = 0; i < parts.length; i++) {
+    if (parts[i].token) {
+      const value = resolveToken(parts[i].token, item, originalId);
+      if (value === undefined) return undefined;
+      id += value;
+    } else {
+      id += parts[i].text;
+    }
+  }
+  return id;
+}
+
+function resolveToken(name, item, originalId) {
+  let value;
+  if (name === 'id') {
+    value = originalId;
+  } else if (name === idBuilder.hostnameToken) {
+    value = idBuilder.hostnameValue;
+  } else if (idBuilder.variables.hasOwnProperty(name)) {
+    const variable = idBuilder.variables[name];
+    value =
+      variable.source === 'itemKey'
+        ? getItemValue(item, makeString(variable.value || '').trim())
+        : variable.value;
+  } else {
+    value = getItemValue(item, name);
+  }
+  return cleanTokenValue(value);
+}
+
+function getItemValue(item, path) {
+  if (!path) return undefined;
+  if (item[path] !== undefined) return item[path];
+
+  const keys = path.split('.');
+  let value = item;
+  for (let i = 0; i < keys.length; i++) {
+    const type = getType(value);
+    if (type !== 'object' && type !== 'array') return undefined;
+    value = value[keys[i]];
+  }
+  return value;
+}
+
+function cleanTokenValue(value) {
+  const type = getType(value);
+  if (type !== 'string' && type !== 'number' && type !== 'boolean') return undefined;
+
+  const stringValue = stripShopifyGid(makeString(value).trim());
+  return stringValue === '' ? undefined : stringValue;
+}
+
+function stripShopifyGid(value) {
+  if (!data.stripShopifyGid || getType(value) !== 'string' || value.indexOf('gid://') !== 0) {
+    return value;
+  }
+  return value.substring(value.lastIndexOf('/') + 1);
+}
+
+function lookupHostnameValue() {
+  const hostname = normalizeHostname(data.hostnameLookupSource || getUrl('host'));
+  const rows = data.hostnameLookupTable || [];
+  for (let i = 0; i < rows.length; i++) {
+    if (hostname && normalizeHostname(rows[i].hostname) === hostname) {
+      const value = rows[i].tokenValue;
+      if (value !== undefined && value !== null && makeString(value).trim() !== '') return value;
+      break;
+    }
+  }
+  return data.hostnameLookupDefault;
+}
+
+function normalizeHostname(hostname) {
+  if (!hostname) return '';
+  let host = makeString(hostname).trim().toLowerCase();
+  if (host.indexOf('://') !== -1) {
+    const url = parseUrl(host);
+    host = url && url.hostname ? url.hostname : '';
+  }
+  if (host.indexOf('www.') === 0) host = host.substring(4);
+  return host;
+}
+
 
 ___WEB_PERMISSIONS___
 
@@ -1344,18 +1815,269 @@ ___WEB_PERMISSIONS___
       "isEditedByUser": true
     },
     "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "get_url",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "urlParts",
+          "value": {
+            "type": 1,
+            "string": "specific"
+          }
+        },
+        {
+          "key": "host",
+          "value": {
+            "type": 8,
+            "boolean": true
+          }
+        },
+        {
+          "key": "queriesAllowed",
+          "value": {
+            "type": 1,
+            "string": "any"
+          }
+        }
+      ]
+    },
+    "clientAnnotations": {
+      "isEditedByUser": true
+    },
+    "isRequired": true
   }
 ]
 
 
 ___TESTS___
 
-scenarios: []
+scenarios:
+- name: '[Generic] items keep every key and get the rebuilt ID'
+  code: |-
+    const result = runCode(createMockData({ generic_task: 'items' }));
+
+    assertThat(result).isEqualTo([
+      {
+        item_id: 'shopify_SE_8123456789_44556677',
+        item_variant: 'gid://shopify/ProductVariant/44556677',
+        price: 10,
+        quantity: 2
+      }
+    ]);
+    assertThat(shopItem.item_id).isEqualTo('8123456789');
+- name: '[Generic] ids return a flat array of rebuilt IDs'
+  code: |-
+    assertThat(runCode(createMockData())).isEqualTo(['shopify_SE_8123456789_44556677']);
+- name: '[Generic] items without an ID or not objects are kept as they are'
+  code: |-
+    const result = runCode(
+      createMockData({ generic_task: 'items', orderItems: [{ item_name: 'Shirt' }] })
+    );
+
+    assertThat(result).isEqualTo([{ item_name: 'Shirt' }]);
+
+    const mixed = createMockData({ generic_task: 'items', idPattern: '{constructor}_{item_id}' });
+    mixed.orderItems = ['not an object', { item_id: 1 }];
+    assertThat(runCode(mixed)).isEqualTo(['not an object', { item_id: 1 }]);
+- name: '[Platforms] Meta, TikTok and GA4 outputs use the rebuilt ID'
+  code: |-
+    const expectedId = 'shopify_SE_8123456789_44556677';
+    const other = (overrides) => createMockData(assign({ generic_task: undefined }, overrides));
+
+    const contentIds = runCode(other({ platform: 'meta', meta_task: 'ids' }));
+    const metaContents = runCode(other({ platform: 'meta', meta_task: 'contents' }));
+    const tiktokContents = runCode(other({ platform: 'tiktok', tiktok_task: 'contents' }));
+    const ga4Items = runCode(other({ platform: 'ga4', ga4_task: 'items' }));
+
+    assertThat(contentIds).isEqualTo([expectedId]);
+    assertThat(metaContents[0].id).isEqualTo(expectedId);
+    assertThat(tiktokContents[0].content_id).isEqualTo(expectedId);
+    assertThat(ga4Items[0].item_id).isEqualTo(expectedId);
+- name: '[Missing token] keeps the original ID or uses the fallback pattern'
+  code: |-
+    [
+      { item: { item_id: '555' }, overrides: {}, expected: '555' },
+      {
+        item: { item_id: '555' },
+        overrides: { onMissingToken: 'fallback', idFallbackPattern: 'shopify_{country}_{item_id}' },
+        expected: 'shopify_SE_555'
+      },
+      {
+        item: { item_id: 7 },
+        overrides: { onMissingToken: 'fallback', idFallbackPattern: '{sku}' },
+        expected: 7
+      },
+      { item: { item_id: '555', item_variant: '  ' }, overrides: {}, expected: '555' },
+      { item: { item_id: '555', item_variant: null }, overrides: {}, expected: '555' },
+      { item: { item_id: 'gid://shopify/Product/9' }, overrides: {}, expected: '9' },
+      { item: { item_id: '555' }, overrides: { idPattern: 'EU-id' }, expected: '555' }
+    ].forEach((scenario) => {
+      const mockData = createMockData(scenario.overrides);
+      mockData.orderItems = [scenario.item];
+
+      assertThat(runCode(mockData)).isEqualTo([scenario.expected]);
+    });
+- name: '[Cleanup] GID strip on and off, and values become trimmed strings'
+  code: |-
+    assertThat(runCode(createMockData({ stripShopifyGid: false }))).isEqualTo([
+      'shopify_SE_8123456789_gid://shopify/ProductVariant/44556677'
+    ]);
+    assertThat(
+      runCode(createMockData({ idPattern: '{item_id}|{sku}', orderItems: [{ item_id: 42, sku: ' A1 ' }] }))
+    ).isEqualTo(['42|A1']);
+    assertThat(
+      runCode(createMockData({ stripShopifyGid: false, orderItems: [{ item_id: 'gid://shopify/Product/9' }] }))
+    ).isEqualTo(['gid://shopify/Product/9']);
+    assertThat(
+      runCode(
+        createMockData({
+          idPattern: '{v}',
+          idPatternVariables: [{ name: 'v', source: 'itemKey', value: ' sku ' }],
+          orderItems: [{ sku: 'A1' }]
+        })
+      )
+    ).isEqualTo(['A1']);
+- name: '[Tokens] id uses the Additional Key, dot paths read nested keys'
+  code: |-
+    const additional = createMockData({
+      useAdditionalKeyId: true,
+      keyIdAdditional: 'sku',
+      idPattern: 'x_{id}',
+      orderItems: [{ item_id: 1, sku: 'S1' }]
+    });
+    const nested = createMockData({
+      idPattern: '{item_id}-{variant.id}-{variant.missing.key}',
+      idPatternVariables: [],
+      onMissingToken: 'fallback',
+      idFallbackPattern: '{item_id}-{variant.id}',
+      orderItems: [{ item_id: 1, variant: { id: 22 } }]
+    });
+
+    assertThat(runCode(additional)).isEqualTo(['x_S1']);
+    assertThat(runCode(nested)).isEqualTo(['1-22']);
+- name: '[Pattern] empty, unclosed and nested braces stay as literal text'
+  code: |-
+    const mockData = createMockData({ idPattern: 'a{}b_{item_id}_{x', orderItems: [{ item_id: 1 }] });
+    const nested = createMockData({ idPattern: 'a{b{item_id}', orderItems: [{ item_id: 1 }] });
+
+    assertThat(runCode(mockData)).isEqualTo(['a{}b_1_{x']);
+    assertThat(runCode(nested)).isEqualTo(['a{b1']);
+- name: '[Hostname] lookup from the page host (match, www, default, no match)'
+  code: |-
+    [
+      { host: 'www.shop.no', expected: 'shopify_NO_8123456789_44556677' },
+      { host: 'SHOP.de', expected: 'shopify_DE_8123456789_44556677' },
+      { host: 'other.com', expected: '8123456789' },
+      { host: undefined, expected: '8123456789' },
+      { host: 'other.com', fallback: 'SE', expected: 'shopify_SE_8123456789_44556677' },
+      { host: 'shop.fi', fallback: 'SE', expected: 'shopify_SE_8123456789_44556677' }
+    ].forEach((scenario) => {
+      pageHost = scenario.host;
+      const mockData = createMockData({
+        idPatternVariables: [{ name: 'variant', source: 'itemKey', value: 'item_variant' }],
+        useHostnameLookup: true,
+        hostnameLookupToken: 'country',
+        hostnameLookupDefault: scenario.fallback,
+        hostnameLookupTable: [
+          { hostname: 'shop.no', tokenValue: 'NO' },
+          { hostname: 'www.shop.de', tokenValue: 'DE' },
+          { hostname: 'shop.fi', tokenValue: '' }
+        ]
+      });
+
+      assertThat(runCode(mockData)).isEqualTo([scenario.expected]);
+    });
+- name: '[Hostname] override field wins over the page host'
+  code: |-
+    pageHost = 'shop.de';
+    const mockData = createMockData({
+      idPatternVariables: [{ name: 'variant', source: 'itemKey', value: 'item_variant' }],
+      useHostnameLookup: true,
+      hostnameLookupToken: ' market ',
+      idPattern: '{market}_{item_id}',
+      hostnameLookupTable: [
+        { hostname: 'shop.no', tokenValue: 'NO' },
+        { hostname: 'shop.de', tokenValue: 'DE' }
+      ]
+    });
+
+    mockData.hostnameLookupSource = 'https://shop.no/page';
+    assertThat(runCode(mockData)).isEqualTo(['NO_8123456789']);
+
+    mockData.hostnameLookupSource = 'shop.no';
+    assertThat(runCode(mockData)).isEqualTo(['NO_8123456789']);
+- name: '[Legacy] Shopify format is unchanged and the builder takes precedence'
+  code: |-
+    const legacy = {
+      platform: 'meta',
+      meta_task: 'ids',
+      orderItems: [shopItem],
+      keyId: 'item_id',
+      formatIdInShopifyFormat: true,
+      shopifyKeyVariant: 'item_variant',
+      shopifyMarketCode: 'SE'
+    };
+
+    assertThat(runCode(legacy)).isEqualTo([
+      'shopify_SE_8123456789_gid://shopify/ProductVariant/44556677'
+    ]);
+
+    const both = createMockData(assign({ generic_task: undefined }, legacy));
+    both.idPattern = 'built_{item_id}';
+    assertThat(runCode(both)).isEqualTo(['built_8123456789']);
+setup: |-
+  const assign = (target, source) => {
+    for (let key in source) target[key] = source[key];
+    return target;
+  };
+
+  let pageHost;
+  mock('getUrl', (component) => (component === 'host' ? pageHost : undefined));
+
+  const shopItem = {
+    item_id: '8123456789',
+    item_variant: 'gid://shopify/ProductVariant/44556677',
+    price: 10,
+    quantity: 2
+  };
+
+  const createMockData = (overrides) =>
+    assign(
+      {
+        platform: 'generic',
+        generic_task: 'ids',
+        orderItems: [shopItem],
+        keyId: 'item_id',
+        keyPr: 'price',
+        keyQt: 'quantity',
+        buildIdFromPattern: true,
+        idPattern: 'shopify_{country}_{item_id}_{variant}',
+        idPatternVariables: [
+          { name: 'country', source: 'value', value: 'SE' },
+          { name: 'variant', source: 'itemKey', value: 'item_variant' }
+        ],
+        stripShopifyGid: true,
+        onMissingToken: 'original'
+      },
+      overrides || {}
+    );
 
 
 ___NOTES___
 
-2026-15-06 - Change Notes:
+2026-11-27 - Change Notes:
+ - Add the Item ID Builder: rebuilds the Product ID from a pattern whose tokens come from item keys, Pattern Variables (text or GTM variables) or a hostname lookup table, so IDs match Merchant Center, Meta and TikTok catalogs (e.g. Shopify multi-market feeds).
+ - Add Shopify GID prefix stripping, a missing-token strategy (keep the original Product ID or try a fallback pattern) and unit tests for the Item ID Builder.
+ - Add the Generic platform, which returns the input items with the rebuilt Product ID (all other keys kept) or a flat array of rebuilt IDs; Name, Price and Quantity keys are hidden for it.
+ - Add the get_url permission (host only), used by the hostname lookup when no Hostname is set.
+ - Reword labels and help texts so they read consistently: Platform options use each pixel's or API's official name (e.g. TikTok Pixel / Events API, OpenAI (ChatGPT Ads) Measurement Pixel), checkbox labels drop the trailing question mark and help texts use full sentences.
+
+2026-06-15 - Change Notes:
  - Add OpenAI Ads parameters.
  - Add additional source for Product ID/SKU.
  - Add Shopify Product ID Feed format support.

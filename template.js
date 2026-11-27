@@ -1,4 +1,5 @@
 const copyFromDataLayer = require('copyFromDataLayer');
+const getUrl = require('getUrl');
 const makeInteger = require('makeInteger');
 const makeNumber = require('makeNumber');
 const makeString = require('makeString');
@@ -6,6 +7,7 @@ const makeTableMap = require('makeTableMap');
 const getType = require('getType');
 const Math = require('Math');
 const Object = require('Object');
+const parseUrl = require('parseUrl');
 
 /*==============================================================================
 ==============================================================================*/
@@ -23,6 +25,7 @@ const customParamMap = data.customParams
   : {};
 const keyCatList = data.keyCatList ? data.keyCatList.split(',') : [];
 const inputArray = data.orderItems;
+const idBuilder = data.buildIdFromPattern ? createIdBuilder() : undefined;
 
 if (getType(inputArray) === 'array' && inputArray.length) return runTask();
 else return;
@@ -33,6 +36,10 @@ else return;
 
 function runTask() {
   const platform = data.platform;
+  if (platform === 'generic') {
+    return data.generic_task === 'ids' ? getContentIds(inputArray) : getGenericItems(inputArray);
+  }
+
   const dataKeys = Object.keys(data);
   let task;
 
@@ -67,6 +74,8 @@ function getId(item) {
   if (data.useAdditionalKeyId && data.keyIdAdditional && item[data.keyIdAdditional]) {
     id = item[data.keyIdAdditional];
   }
+
+  if (idBuilder) return buildItemId(item, id);
 
   if (data.formatIdInShopifyFormat && data.shopifyKeyVariant && item[data.shopifyKeyVariant]) {
     const marketCode = data.shopifyMarketCode || 'ZZ';
@@ -371,4 +380,158 @@ function convertCurrencyValueToMinorUnit(value, currency) {
   else if (threeDecimalCurrencies.indexOf(upperCurrency) !== -1) multiplier = 1000;
 
   return makeInteger(toFixed2(value * multiplier));
+}
+
+/*==============================================================================
+  Item ID Builder
+==============================================================================*/
+
+function getGenericItems(inputArray) {
+  return inputArray.map((item) => {
+    if (getType(item) !== 'object') return item;
+    const genericItem = {};
+    Object.keys(item).forEach((key) => {
+      genericItem[key] = item[key];
+    });
+    const id = getId(item);
+    if (id !== undefined) genericItem[keyId] = id;
+    return genericItem;
+  });
+}
+
+function createIdBuilder() {
+  const variables = {};
+  (data.idPatternVariables || []).forEach((row) => {
+    if (row && row.name) variables[makeString(row.name).trim()] = row;
+  });
+
+  return {
+    pattern: parsePattern(data.idPattern),
+    fallbackPattern:
+      data.onMissingToken === 'fallback' ? parsePattern(data.idFallbackPattern) : undefined,
+    variables: variables,
+    hostnameToken: data.useHostnameLookup
+      ? makeString(data.hostnameLookupToken || '').trim() || 'country'
+      : undefined,
+    hostnameValue: data.useHostnameLookup ? lookupHostnameValue() : undefined
+  };
+}
+
+function parsePattern(pattern) {
+  if (pattern === undefined || pattern === null || pattern === '') return undefined;
+  pattern = makeString(pattern);
+
+  const parts = [];
+  let hasToken = false;
+  let cursor = 0;
+  while (cursor < pattern.length) {
+    const close = pattern.indexOf('}', cursor);
+    const open = close === -1 ? -1 : pattern.lastIndexOf('{', close);
+    const tokenName = open >= cursor ? pattern.substring(open + 1, close).trim() : '';
+
+    if (!tokenName) {
+      const end = close === -1 ? pattern.length : close + 1;
+      parts.push({ text: pattern.substring(cursor, end) });
+      cursor = end;
+    } else {
+      if (open > cursor) parts.push({ text: pattern.substring(cursor, open) });
+      parts.push({ token: tokenName });
+      hasToken = true;
+      cursor = close + 1;
+    }
+  }
+  return hasToken ? parts : undefined;
+}
+
+function buildItemId(item, originalId) {
+  let id = buildIdFromParts(idBuilder.pattern, item, originalId);
+  if (id === undefined) id = buildIdFromParts(idBuilder.fallbackPattern, item, originalId);
+  return id === undefined ? stripShopifyGid(originalId) : id;
+}
+
+function buildIdFromParts(parts, item, originalId) {
+  if (!parts) return undefined;
+
+  let id = '';
+  for (let i = 0; i < parts.length; i++) {
+    if (parts[i].token) {
+      const value = resolveToken(parts[i].token, item, originalId);
+      if (value === undefined) return undefined;
+      id += value;
+    } else {
+      id += parts[i].text;
+    }
+  }
+  return id;
+}
+
+function resolveToken(name, item, originalId) {
+  let value;
+  if (name === 'id') {
+    value = originalId;
+  } else if (name === idBuilder.hostnameToken) {
+    value = idBuilder.hostnameValue;
+  } else if (idBuilder.variables.hasOwnProperty(name)) {
+    const variable = idBuilder.variables[name];
+    value =
+      variable.source === 'itemKey'
+        ? getItemValue(item, makeString(variable.value || '').trim())
+        : variable.value;
+  } else {
+    value = getItemValue(item, name);
+  }
+  return cleanTokenValue(value);
+}
+
+function getItemValue(item, path) {
+  if (!path) return undefined;
+  if (item[path] !== undefined) return item[path];
+
+  const keys = path.split('.');
+  let value = item;
+  for (let i = 0; i < keys.length; i++) {
+    const type = getType(value);
+    if (type !== 'object' && type !== 'array') return undefined;
+    value = value[keys[i]];
+  }
+  return value;
+}
+
+function cleanTokenValue(value) {
+  const type = getType(value);
+  if (type !== 'string' && type !== 'number' && type !== 'boolean') return undefined;
+
+  const stringValue = stripShopifyGid(makeString(value).trim());
+  return stringValue === '' ? undefined : stringValue;
+}
+
+function stripShopifyGid(value) {
+  if (!data.stripShopifyGid || getType(value) !== 'string' || value.indexOf('gid://') !== 0) {
+    return value;
+  }
+  return value.substring(value.lastIndexOf('/') + 1);
+}
+
+function lookupHostnameValue() {
+  const hostname = normalizeHostname(data.hostnameLookupSource || getUrl('host'));
+  const rows = data.hostnameLookupTable || [];
+  for (let i = 0; i < rows.length; i++) {
+    if (hostname && normalizeHostname(rows[i].hostname) === hostname) {
+      const value = rows[i].tokenValue;
+      if (value !== undefined && value !== null && makeString(value).trim() !== '') return value;
+      break;
+    }
+  }
+  return data.hostnameLookupDefault;
+}
+
+function normalizeHostname(hostname) {
+  if (!hostname) return '';
+  let host = makeString(hostname).trim().toLowerCase();
+  if (host.indexOf('://') !== -1) {
+    const url = parseUrl(host);
+    host = url && url.hostname ? url.hostname : '';
+  }
+  if (host.indexOf('www.') === 0) host = host.substring(4);
+  return host;
 }
