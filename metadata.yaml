@@ -1,6 +1,8 @@
 homepage: 'https://stape.io/'
 documentation: 'https://github.com/stape-io/universal-conversions-variable'
 versions:
+  - sha: 7ff9ee68ef584b5f8700c979b72a71d550658ba9
+    changeNotes: Add Item ID Builder to rebuild Product IDs from a pattern and Generic platform.
   - sha: fdf1d79cc88c399120cd5f73fadc0bb6077904b8
     changeNotes: Add support to OpenAI parameters. Add Product ID customization.
   - sha: da6c126717e501adee0b70267f36d36e67758d9b
